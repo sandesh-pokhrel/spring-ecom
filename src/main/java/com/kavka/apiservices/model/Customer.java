@@ -44,8 +44,8 @@ public class Customer {
     private Boolean isDefault;
 
     @ManyToOne
-    @JoinColumn(name = "email", referencedColumnName = "email",
-            foreignKey = @ForeignKey(name = "fk_customer_email"))
+    @JoinColumn(name = "user_id", referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "fk_customer_user_id"))
     @JsonBackReference
     private User user;
 

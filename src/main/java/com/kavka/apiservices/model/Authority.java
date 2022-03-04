@@ -19,12 +19,12 @@ import java.util.Objects;
 public class Authority {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Integer id;
     private String role;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "email", referencedColumnName = "email",
-            foreignKey = @ForeignKey(name="fk_authority_email"))
+    @JoinColumn(name = "user_id", referencedColumnName = "id",
+            foreignKey = @ForeignKey(name="fk_authority_user_id"))
     @JsonBackReference
     private User user;
 
@@ -33,7 +33,7 @@ public class Authority {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Authority authority = (Authority) o;
-        return id == authority.id;
+        return Objects.equals(id, authority.id);
     }
 
     @Override
