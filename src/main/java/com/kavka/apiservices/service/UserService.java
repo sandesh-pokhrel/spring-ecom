@@ -40,6 +40,7 @@ public class UserService {
             throw new UserExistsException("Email address already exists!");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setEnabled(true);
+        user.setIsVerified(false);
         if (Objects.isNull(user.getAuthorities())) {
             user.setAuthorities(Collections.singletonList(new Authority(null, "ROLE_USER", user)));
         }

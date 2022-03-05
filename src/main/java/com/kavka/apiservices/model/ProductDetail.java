@@ -12,12 +12,12 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "product", uniqueConstraints = {
-        @UniqueConstraint(name = "unq_product_code", columnNames = "code")
+@Table(name = "product_detail", uniqueConstraints = {
+        @UniqueConstraint(name = "unq_product_detail_code", columnNames = "code")
 })
 @JsonIgnoreProperties(ignoreUnknown = true)
-@ApiModel(description = "Product related info.")
-public class Product {
+@ApiModel(description = "Product detail related info.")
+public class ProductDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -25,11 +25,12 @@ public class Product {
     private String name;
     @Column(unique = true, nullable = false)
     private String code;
-    private String description;
+    private String colors;
+    private Double price;
     private String imageUrl;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_category_id", referencedColumnName = "id",
-            foreignKey = @ForeignKey(name = "fk_product_product_category_id"))
-    private ProductCategory productCategory;
+    @JoinColumn(name = "product_id", referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "fk_product_product_id"))
+    private Product product;
 }

@@ -40,6 +40,7 @@ public class User implements Serializable {
     private String lastName;
     private String company;
     private Boolean enabled;
+    private Boolean isVerified;
 
     @CreationTimestamp
     @Temporal(TemporalType.DATE)
