@@ -14,7 +14,6 @@ import java.util.Collections;
 import java.util.Objects;
 
 @Service
-@Transactional
 @AllArgsConstructor
 public class UserService {
 
@@ -25,6 +24,7 @@ public class UserService {
         return userRepository.findByEmailAndEnabled(email, true);
     }
 
+    @Transactional
     public User getByEmail(String email) {
         return userRepository
                 .findByEmail(email).orElseThrow(() -> new UserNotFoundException("User " + email + " not found!"));

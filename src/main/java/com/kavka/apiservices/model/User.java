@@ -1,5 +1,6 @@
 package com.kavka.apiservices.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
@@ -23,6 +24,7 @@ import java.util.Objects;
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = "email", name = "unq_user_email")
 })
+@JsonIgnoreProperties(value = {"customers"})
 @ApiModel(description = "This is the user table related to authentication.")
 public class User implements Serializable {
 
