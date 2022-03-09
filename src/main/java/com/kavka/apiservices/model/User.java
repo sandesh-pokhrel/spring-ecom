@@ -10,7 +10,6 @@ import javax.persistence.*;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -32,7 +31,7 @@ public class User implements Serializable {
     private Integer id;
     @Column(unique = true)
     @NotBlank(message = "{model.field.email.validation.blank}")
-    @Email(message = "Invalid email address.")
+    @Email(message = "{model.field.email.validation}")
     private String email;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
