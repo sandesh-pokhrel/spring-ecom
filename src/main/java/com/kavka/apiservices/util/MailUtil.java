@@ -2,21 +2,30 @@ package com.kavka.apiservices.util;
 
 import com.kavka.apiservices.common.MailProperties;
 import com.kavka.apiservices.common.MailType;
-import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import org.springframework.mail.javamail.MimeMessageHelper;
 
 @Component
-@AllArgsConstructor
 public class MailUtil {
 
     private final JavaMailSender javaMailSender;
     private final MailProperties mailProperties;
+
+    @Autowired
+    public MailUtil(JavaMailSender javaMailSender, MailProperties mailProperties) {
+        this.javaMailSender = javaMailSender;
+        this.mailProperties = mailProperties;
+    }
+
+    @Value("${mail.message.registration}")
+    private String registrationBody;
 
     private MimeMessage getMessageFormat(String toEmail, MailType mailType, String serial,
                                          byte[] attachmentBytes) throws MessagingException {
@@ -28,8 +37,7 @@ public class MailUtil {
 
         if (mailType == MailType.USER_CREATION) {
             helper.setSubject("Registration Successful");
-            String bodyText = "<h2>Congratulations you are successfully registered!</h2>";
-            bodyText += "<h3>You can order your desired items now. Your order will be delivered in time.</h3>";
+            String bodyText = registrationBody;
             helper.setText(bodyText, true);
 
         } else if (mailType == MailType.RESET_PASSWORD) {
