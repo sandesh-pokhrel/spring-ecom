@@ -19,6 +19,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
@@ -59,7 +60,7 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Uses registration.")
-    public User saveUser(@Valid @RequestBody User user) {
+    public User saveUser(@Valid @RequestBody User user) throws MessagingException {
         return userService.saveUser(user);
     }
 }
