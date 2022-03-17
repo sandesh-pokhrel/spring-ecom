@@ -6,6 +6,11 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpRequest;
+import org.springframework.http.client.ClientHttpRequestExecution;
+import org.springframework.http.client.ClientHttpRequestInterceptor;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +20,8 @@ import org.springframework.web.client.RestTemplate;
 import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
+import java.io.IOException;
+import java.util.List;
 
 
 @Configuration
@@ -30,6 +37,10 @@ public class CommonConfig {
 
     @Bean
     public RestTemplate restTemplate() {
+        RestTemplate restTemplate = new RestTemplate();
+        List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
+        interceptors.add(new RestTemplateHeaderModifierInterceptor());
+        restTemplate.setInterceptors(interceptors);
         return new RestTemplate();
     }
 
@@ -69,5 +80,19 @@ public class CommonConfig {
         executor.setWaitForTasksToCompleteOnShutdown(true);
         executor.setThreadNamePrefix("Async-");
         return executor;
+    }
+
+    private static class RestTemplateHeaderModifierInterceptor implements ClientHttpRequestInterceptor {
+        @Override
+        public ClientHttpResponse intercept(
+                HttpRequest request,
+                byte[] body,
+                ClientHttpRequestExecution execution) throws IOException {
+            HttpHeaders httpHeaders = new HttpHeaders();
+            httpHeaders.set("ORDERDESK-STORE-ID", "random_store_id");
+            httpHeaders.set("ORDERDESK-API-KEY", "456454354364565");
+            request.getHeaders().addAll(httpHeaders);
+            return execution.execute(request, body);
+        }
     }
 }

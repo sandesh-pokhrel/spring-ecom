@@ -6,6 +6,7 @@ import com.kavka.apiservices.model.User;
 import com.kavka.apiservices.request.LoginRequest;
 import com.kavka.apiservices.service.CustomUserDetailsService;
 import com.kavka.apiservices.service.UserService;
+import com.lowagie.text.DocumentException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -60,7 +61,7 @@ public class UserController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Uses registration.")
-    public User saveUser(@Valid @RequestBody User user) throws MessagingException {
+    public User saveUser(@Valid @RequestBody User user) throws MessagingException, DocumentException {
         return userService.saveUser(user);
     }
 }

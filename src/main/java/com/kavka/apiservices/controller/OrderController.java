@@ -1,15 +1,21 @@
 package com.kavka.apiservices.controller;
 
+import com.kavka.apiservices.common.MailType;
 import com.kavka.apiservices.dto.OrderDto;
 import com.kavka.apiservices.request.OrderRequest;
 import com.kavka.apiservices.service.OrderService;
+import com.kavka.apiservices.util.MailUtil;
+import com.lowagie.text.DocumentException;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.*;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
+import javax.mail.MessagingException;
 import java.security.Principal;
 
 @RestController
@@ -20,28 +26,25 @@ public class OrderController {
 
     private final OrderService orderService;
     private final RestTemplate restTemplate;
+    private final MailUtil mailUtil;
 
     @Value("${orderdesk.api-url}")
     private String orderdeskUrl;
 
     @Autowired
-    public OrderController(OrderService orderService, RestTemplate restTemplate) {
+    public OrderController(OrderService orderService, RestTemplate restTemplate, MailUtil mailUtil) {
         this.orderService = orderService;
         this.restTemplate = restTemplate;
+        this.mailUtil = mailUtil;
     }
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public void postOrder(@RequestBody OrderRequest orderRequest,
-                          Principal principal) {
+                          Principal principal) throws MessagingException, DocumentException {
         OrderDto orderDto = this.orderService.buildRequest(orderRequest, principal);
-
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        httpHeaders.set("ORDERDESK-STORE-ID", "random_store_id");
-        httpHeaders.set("ORDERDESK-API-KEY", "456454354364565");
-        HttpEntity<OrderDto> httpEntity = new HttpEntity<>(orderDto, httpHeaders);
-        //ResponseEntity<String> result = this.restTemplate.exchange(orderdeskUrl, HttpMethod.POST, httpEntity, String.class);
-        //System.out.println(result);
+        HttpEntity<OrderDto> httpEntity = new HttpEntity<>(orderDto);
+        this.restTemplate.exchange(orderdeskUrl, HttpMethod.POST, httpEntity, String.class);
+        mailUtil.sendMail(principal.getName(), MailType.INVOICE_MAIL, null, null);
     }
 }

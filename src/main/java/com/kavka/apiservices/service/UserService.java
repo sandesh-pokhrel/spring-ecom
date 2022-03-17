@@ -7,6 +7,7 @@ import com.kavka.apiservices.model.Authority;
 import com.kavka.apiservices.model.User;
 import com.kavka.apiservices.repository.UserRepository;
 import com.kavka.apiservices.util.MailUtil;
+import com.lowagie.text.DocumentException;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -38,7 +39,7 @@ public class UserService {
         return userRepository.countByEmail(email);
     }
 
-    public User saveUser(User user) throws MessagingException {
+    public User saveUser(User user) throws MessagingException, DocumentException {
         if (user == null) throw new IllegalArgumentException("User passed is not supported!");
         else if (countByEmail(user.getEmail()) > 0)
             throw new UserExistsException("Email address already exists!");
