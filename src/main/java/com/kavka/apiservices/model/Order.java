@@ -2,6 +2,7 @@ package com.kavka.apiservices.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
@@ -27,11 +28,22 @@ public class Order {
 
     @CreationTimestamp
     @Temporal(TemporalType.DATE)
+    @JsonProperty("date_added")
     private Date dateAdded;
 
     @UpdateTimestamp
     @Temporal(TemporalType.DATE)
+    @JsonProperty("date_updated")
     private Date dateUpdated;
+    private String shippingMethod;
+    private Double shippingTotal;
+    private Double handlingTotal;
+    private Double taxTotal;
+
+    @OneToOne
+    @JoinColumn(name = "billing_id", referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "fk_order_billing_id"))
+    private Billing billing;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id",

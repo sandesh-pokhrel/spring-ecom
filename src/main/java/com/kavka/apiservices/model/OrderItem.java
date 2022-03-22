@@ -1,5 +1,6 @@
 package com.kavka.apiservices.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
@@ -21,17 +22,15 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private String name;
-    private Double price;
     private Integer quantity;
-    private Double weight;
-    private String code;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "fk_order_item_order_id"))
+    @JsonBackReference
     private Order order;
-//    @JsonProperty("variation_list")
-//    private Map<String, String> variationList;
-//    private Map<String, String> metadata;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "product_detail_id", referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "fk_order_item_product_detail_id"))
+    private ProductDetail productDetail;
 }

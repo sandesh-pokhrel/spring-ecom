@@ -2,6 +2,7 @@ package com.kavka.apiservices.util;
 
 import com.kavka.apiservices.common.MailProperties;
 import com.kavka.apiservices.common.MailType;
+import com.kavka.apiservices.model.Order;
 import com.lowagie.text.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -13,8 +14,10 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
-import javax.mail.util.ByteArrayDataSource;
 import java.io.ByteArrayOutputStream;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Collectors;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @Component
@@ -44,8 +47,27 @@ public class MailUtil {
         return byteArrayOutputStream.toByteArray();
     }
 
-    private MimeMessage getMessageFormat(String toEmail, MailType mailType, String serial,
-                                         byte[] attachmentBytes) throws MessagingException, DocumentException {
+    private String invoiceBodyFromTemplate(String template, Order order) {
+        AtomicReference<Double> atomicReference = new AtomicReference<>(0D);
+        String items = order.getOrderItems().stream().map(orderItem -> {
+            Double totalPrice = orderItem.getQuantity() * orderItem.getProductDetail().getPrice();
+            atomicReference.set(atomicReference.get() + totalPrice);
+            String i = "<tr>";
+            i += "<td>" + orderItem.getProductDetail().getName() + "</td>";
+            i += "<td>" + orderItem.getQuantity() + "</td>";
+            i += "<td>" + orderItem.getProductDetail().getPrice() + "</td>";
+            i += "<td>" + totalPrice + "</td>";
+            i += "</tr>";
+            return i;
+        }).collect(Collectors.joining(""));
+        return template
+                .replace("{##tableContents##}", items)
+                .replace("{##tableTotal##}", String.valueOf(atomicReference.get()));
+    }
+
+
+    private MimeMessage getMessageFormat(String toEmail, MailType mailType, Map<String, Object> extras)
+            throws MessagingException, DocumentException {
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper helper = new MimeMessageHelper(message, true, "utf-8");
 //        helper.setFrom(mailProperties.getUsername());
@@ -61,19 +83,19 @@ public class MailUtil {
             System.out.println("Reset password request");
         } else if (mailType == MailType.INVOICE_MAIL) {
             helper.setSubject("Invoice");
-            String bodyText = invoiceBody;
+            String bodyText = invoiceBodyFromTemplate(invoiceBody, (Order) extras.get("order"));
             helper.setText(bodyText, true);
-            attachmentBytes = generatePdfFromHtml(bodyText);
-            helper.addAttachment("Invoice.pdf",
-                    new ByteArrayDataSource(attachmentBytes, "application/octet-stream"));
+//            attachmentBytes = generatePdfFromHtml(bodyText);
+//            helper.addAttachment("Invoice.pdf",
+//                    new ByteArrayDataSource(attachmentBytes, "application/octet-stream"));
         }
         return message;
     }
 
     @Async("threadPoolTaskExecutor")
-    public void sendMail(String toEmail, MailType mailType, String serialNumber, byte[] attachmentBytes)
+    public void sendMail(String toEmail, MailType mailType, Map<String, Object> extras)
             throws MessagingException, DocumentException {
-        MimeMessage message = getMessageFormat(toEmail, mailType, serialNumber, attachmentBytes);
+        MimeMessage message = getMessageFormat(toEmail, mailType, extras);
         javaMailSender.send(message);
     }
 }

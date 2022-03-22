@@ -12,9 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "product_detail", uniqueConstraints = {
-        @UniqueConstraint(name = "unq_product_detail_code", columnNames = "code")
-})
+@Table(name = "product_detail")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ApiModel(description = "Product detail related info.")
 public class ProductDetail {

@@ -17,10 +17,10 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "customer")
+@Table(name = "billing")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ApiModel(description = "Customer related info.")
-public class Customer {
+public class Billing {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -53,8 +53,8 @@ public class Customer {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Customer customer = (Customer) o;
-        return id.equals(customer.id);
+        Billing billing = (Billing) o;
+        return id.equals(billing.id);
     }
 
     @Override

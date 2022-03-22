@@ -50,7 +50,7 @@ public class UserService {
             user.setAuthorities(Collections.singletonList(new Authority(null, "ROLE_USER", user)));
         }
         User savedUser = userRepository.save(user);
-        mailUtil.sendMail(savedUser.getEmail(), MailType.USER_CREATION, null, null);
+        mailUtil.sendMail(savedUser.getEmail(), MailType.USER_CREATION, null);
         return savedUser;
     }
 }

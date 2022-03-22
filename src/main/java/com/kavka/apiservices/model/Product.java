@@ -12,9 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "product", uniqueConstraints = {
-        @UniqueConstraint(name = "unq_product_code", columnNames = "code")
-})
+@Table(name = "product")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ApiModel(description = "Product related info.")
 public class Product {
@@ -23,7 +21,7 @@ public class Product {
     private Integer id;
     @Column(nullable = false)
     private String name;
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String code;
     private String description;
     private String imageUrl;
