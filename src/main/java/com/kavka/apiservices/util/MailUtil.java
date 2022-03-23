@@ -15,6 +15,8 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
@@ -73,6 +75,9 @@ public class MailUtil {
         }).collect(Collectors.joining(""));
         return template
                 .replace("{##tableContents##}", items)
+                .replace("{##orderId##}", String.valueOf(order.getId()))
+                .replace("{##orderDate##}", new SimpleDateFormat("yyyy-MM-dd").format(new Date()))
+                .replace("{##customerId##}", order.getUser().getEmail())
                 .replace("{##tableTotal##}", String.valueOf(atomicReference.get()));
     }
 
