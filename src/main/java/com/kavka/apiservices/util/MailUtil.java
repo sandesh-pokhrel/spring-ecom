@@ -16,7 +16,9 @@ import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
@@ -36,6 +38,15 @@ public class MailUtil {
     private String registrationBody;
     @Value("${mail.message.invoice}")
     private String invoiceBody;
+
+
+    @SuppressWarnings({"rawtypes", "unchecked"})
+    private void executeCallback(Map<String, Object> extras) {
+        Object callback = extras.get("callback");
+        if (callback instanceof Consumer) {
+            ((Consumer) callback).accept(extras.get("data"));
+        }
+    }
 
     private byte[] generatePdfFromHtml(String html) throws DocumentException {
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -83,7 +94,7 @@ public class MailUtil {
             System.out.println("Reset password request");
         } else if (mailType == MailType.INVOICE_MAIL) {
             helper.setSubject("Invoice");
-            String bodyText = invoiceBodyFromTemplate(invoiceBody, (Order) extras.get("order"));
+            String bodyText = invoiceBodyFromTemplate(invoiceBody, (Order) extras.get("data"));
             helper.setText(bodyText, true);
 //            attachmentBytes = generatePdfFromHtml(bodyText);
 //            helper.addAttachment("Invoice.pdf",
@@ -97,5 +108,8 @@ public class MailUtil {
             throws MessagingException, DocumentException {
         MimeMessage message = getMessageFormat(toEmail, mailType, extras);
         javaMailSender.send(message);
+        if (Objects.nonNull(extras) && extras.containsKey("callback")) {
+            executeCallback(extras);
+        }
     }
 }

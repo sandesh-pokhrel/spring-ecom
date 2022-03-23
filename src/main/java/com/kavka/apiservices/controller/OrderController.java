@@ -2,9 +2,11 @@ package com.kavka.apiservices.controller;
 
 import com.kavka.apiservices.common.MailType;
 import com.kavka.apiservices.exception.InvalidOperationException;
+import com.kavka.apiservices.model.Invoice;
 import com.kavka.apiservices.model.Order;
 import com.kavka.apiservices.model.OrderRequestMode;
 import com.kavka.apiservices.request.OrderRequest;
+import com.kavka.apiservices.service.InvoiceService;
 import com.kavka.apiservices.service.OrderService;
 import com.kavka.apiservices.util.MailUtil;
 import com.lowagie.text.DocumentException;
@@ -19,6 +21,8 @@ import javax.mail.MessagingException;
 import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 @RestController
 @RequestMapping("/orders")
@@ -27,6 +31,7 @@ import java.util.Map;
 public class OrderController {
 
     private final OrderService orderService;
+    private final InvoiceService invoiceService;
     private final RestTemplate restTemplate;
     private final MailUtil mailUtil;
 
@@ -35,9 +40,11 @@ public class OrderController {
 
     @Autowired
     public OrderController(OrderService orderService,
+                           InvoiceService invoiceService,
                            RestTemplate restTemplate,
                            MailUtil mailUtil) {
         this.orderService = orderService;
+        this.invoiceService = invoiceService;
         this.restTemplate = restTemplate;
         this.mailUtil = mailUtil;
     }
@@ -50,8 +57,13 @@ public class OrderController {
                 orderRequest.getOrderRequestMode() == OrderRequestMode.CUSTOM)
             throw new InvalidOperationException("Billing method not supported");
         Order order = this.orderService.saveOrder(orderRequest);
+        Consumer<Order> fnInvoice = order1 -> {
+            Invoice invoice = new Invoice(null, "PENDING", order1);
+            invoiceService.save(invoice);
+        };
         Map<String, Object> extras = new HashMap<>();
-        extras.put("order", order);
+        extras.put("data", order);
+        extras.put("callback", fnInvoice);
         mailUtil.sendMail(principal.getName(), MailType.INVOICE_MAIL, extras);
         return order;
     }

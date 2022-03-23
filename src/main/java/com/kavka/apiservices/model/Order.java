@@ -40,7 +40,7 @@ public class Order {
     private Double handlingTotal;
     private Double taxTotal;
     @Enumerated(EnumType.STRING)
-    private OrderStatus orderStatus;
+    private OrderStatus status;
 
     @OneToOne
     @JoinColumn(name = "billing_id", referencedColumnName = "id",

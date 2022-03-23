@@ -94,7 +94,7 @@ public class OrderService {
                 .shippingMethod(orderRequest.getShippingMethod())
                 .user(user)
                 .orderItems(orderItems)
-                .orderStatus(OrderStatus.PENDING)
+                .status(OrderStatus.PENDING)
                 .build();
         return this.orderRepository.save(order);
     }
