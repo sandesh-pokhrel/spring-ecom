@@ -1,6 +1,7 @@
 package com.kavka.apiservices.config;
 
 import com.kavka.apiservices.common.Status;
+import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +22,6 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import javax.validation.ValidatorFactory;
 import java.io.IOException;
-import java.util.List;
 
 
 @Configuration
@@ -36,12 +36,10 @@ public class CommonConfig {
     }
 
     @Bean
-    public RestTemplate restTemplate() {
-        RestTemplate restTemplate = new RestTemplate();
-        List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
-        interceptors.add(new RestTemplateHeaderModifierInterceptor());
-        restTemplate.setInterceptors(interceptors);
-        return new RestTemplate();
+    public RestTemplate restTemplate(RestTemplateBuilder restTemplateBuilder) {
+        return restTemplateBuilder
+                .additionalInterceptors(new RestTemplateHeaderModifierInterceptor())
+                .build();
     }
 
     @Bean

@@ -1,6 +1,7 @@
 package com.kavka.apiservices.controller;
 
 import com.kavka.apiservices.common.MailType;
+import com.kavka.apiservices.dto.OrderDto;
 import com.kavka.apiservices.exception.InvalidOperationException;
 import com.kavka.apiservices.model.Invoice;
 import com.kavka.apiservices.model.Order;
@@ -13,7 +14,10 @@ import com.lowagie.text.DocumentException;
 import io.swagger.annotations.Api;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
@@ -22,7 +26,6 @@ import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
-import java.util.function.Function;
 
 @RestController
 @RequestMapping("/orders")
@@ -52,7 +55,7 @@ public class OrderController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Order saveOrder(@RequestBody OrderRequest orderRequest,
-                          Principal principal) throws MessagingException, DocumentException {
+                           Principal principal) throws MessagingException, DocumentException {
         if (orderRequest.getOrderRequestMode() == OrderRequestMode.GUEST ||
                 orderRequest.getOrderRequestMode() == OrderRequestMode.CUSTOM)
             throw new InvalidOperationException("Billing method not supported");
@@ -70,11 +73,11 @@ public class OrderController {
 
     @GetMapping("/send-to-orderdesk/{orderId}")
     @ResponseStatus(HttpStatus.OK)
-    public void sendOrderToOrderDesk() {
-//        OrderDto orderDto = this.orderService.buildRequest(orderRequest, principal);
-//        if (user.getIsVerified()) {
-//            HttpEntity<OrderDto> httpEntity = new HttpEntity<>(orderDto);
-//            this.restTemplate.exchange(orderdeskUrl, HttpMethod.POST, httpEntity, String.class);
-//        }
+    public void sendOrderToOrderDesk(@PathVariable Integer orderId) {
+        Order order = this.orderService.getById(orderId);
+        OrderDto orderDto = this.orderService.buildRequest(order);
+        ResponseEntity<Object> response =
+                this.restTemplate.exchange(orderdeskUrl, HttpMethod.POST, new HttpEntity<>(orderDto), Object.class);
+
     }
 }

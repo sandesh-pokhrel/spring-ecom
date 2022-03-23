@@ -1,6 +1,7 @@
 package com.kavka.apiservices.service;
 
-import com.kavka.apiservices.dto.mapper.OrderRequestToDtoMapper;
+import com.kavka.apiservices.dto.OrderDto;
+import com.kavka.apiservices.dto.mapper.OrderToDtoMapper;
 import com.kavka.apiservices.exception.InvalidOperationException;
 import com.kavka.apiservices.model.*;
 import com.kavka.apiservices.model.mapper.OrderRequestItemToModelMapper;
@@ -27,7 +28,7 @@ public class OrderService {
     private final UserService userService;
     private final ProductDetailService productDetailService;
     private final Validator validator;
-    private final OrderRequestToDtoMapper orderRequestToDtoMapper;
+    private final OrderToDtoMapper orderToDtoMapper;
     private final OrderRequestItemToModelMapper orderRequestItemToModelMapper;
 
     @Value("${mail.admin}")
@@ -38,14 +39,14 @@ public class OrderService {
                         UserService userService,
                         ProductDetailService productDetailService,
                         Validator validator,
-                        OrderRequestToDtoMapper orderRequestToDtoMapper,
+                        OrderToDtoMapper orderToDtoMapper,
                         OrderRequestItemToModelMapper orderRequestItemToModelMapper) {
         this.orderRepository = orderRepository;
         this.billingService = billingService;
         this.userService = userService;
         this.productDetailService = productDetailService;
         this.validator = validator;
-        this.orderRequestToDtoMapper = orderRequestToDtoMapper;
+        this.orderToDtoMapper = orderToDtoMapper;
         this.orderRequestItemToModelMapper = orderRequestItemToModelMapper;
     }
 
@@ -80,6 +81,10 @@ public class OrderService {
         return billing;
     }
 
+    public Order getById(Integer id) {
+        return this.orderRepository.findById(id).orElseThrow(() -> new InvalidOperationException("Invalid order id!"));
+    }
+
     public Order saveOrder(OrderRequest orderRequest) {
         Principal principal = SecurityContextHolder.getContext().getAuthentication();
         Billing billing = getBilling(orderRequest, principal);
@@ -99,29 +104,10 @@ public class OrderService {
         return this.orderRepository.save(order);
     }
 
-//    public OrderDto buildRequest(OrderRequest orderRequest, Principal principal) {
-//        if (Objects.isNull(orderRequest) || Objects.isNull(orderRequest.getOrderRequestMode()))
-//            throw new InvalidOperationException("Order request mode is invalid!");
-//        Billing billing;
-//        Billing kavkaCustomer = this.billingService.getAllByEmailAndIsDefault(adminEmail, true).get(0);
-//        Billing kavkaReturn = this.billingService.getAllByEmailAndIsDefault(adminEmail, false).get(0);
-//        switch (orderRequest.getOrderRequestMode()) {
-//            case SPECIFIED:
-//                billing = this.billingService.getByIdAndEmail(orderRequest.getCustomerId(), principal.getName());
-//                break;
-//            case DEFAULT:
-//                billing = this.billingService.getByEmailAndIsDefault(principal.getName(), true);
-//                break;
-//            case CUSTOM:
-//            case GUEST:
-//                validateCustomer(orderRequest.getBilling());
-//                billing = orderRequest.getBilling();
-//                break;
-//            default:
-//                throw new InvalidOperationException("Order request mode is invalid!");
-//        }
-//        OrderDto orderDto = this.orderRequestToDtoMapper.from(orderRequest, kavkaCustomer, kavkaReturn);
-//        orderDto.setShipping(billing);
-//        return orderDto;
-//    }
+    public OrderDto buildRequest(Order order) {
+        Billing kavkaCustomer = this.billingService.getAllByEmailAndIsDefault(adminEmail, true).get(0);
+        Billing kavkaReturn = this.billingService.getAllByEmailAndIsDefault(adminEmail, false).get(0);
+
+        return this.orderToDtoMapper.from(order, kavkaCustomer, kavkaReturn);
+    }
 }
