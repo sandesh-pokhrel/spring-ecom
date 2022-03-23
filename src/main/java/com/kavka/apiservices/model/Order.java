@@ -39,6 +39,8 @@ public class Order {
     private Double shippingTotal;
     private Double handlingTotal;
     private Double taxTotal;
+    @Enumerated(EnumType.STRING)
+    private OrderStatus orderStatus;
 
     @OneToOne
     @JoinColumn(name = "billing_id", referencedColumnName = "id",

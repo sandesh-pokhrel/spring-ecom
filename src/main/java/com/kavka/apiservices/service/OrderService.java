@@ -2,10 +2,7 @@ package com.kavka.apiservices.service;
 
 import com.kavka.apiservices.dto.mapper.OrderRequestToDtoMapper;
 import com.kavka.apiservices.exception.InvalidOperationException;
-import com.kavka.apiservices.model.Billing;
-import com.kavka.apiservices.model.Order;
-import com.kavka.apiservices.model.OrderItem;
-import com.kavka.apiservices.model.User;
+import com.kavka.apiservices.model.*;
 import com.kavka.apiservices.model.mapper.OrderRequestItemToModelMapper;
 import com.kavka.apiservices.repository.OrderRepository;
 import com.kavka.apiservices.request.OrderRequest;
@@ -97,6 +94,7 @@ public class OrderService {
                 .shippingMethod(orderRequest.getShippingMethod())
                 .user(user)
                 .orderItems(orderItems)
+                .orderStatus(OrderStatus.PENDING)
                 .build();
         return this.orderRepository.save(order);
     }
