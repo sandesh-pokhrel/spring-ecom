@@ -61,7 +61,7 @@ public class OrderController {
             throw new InvalidOperationException("Billing method not supported");
         Order order = this.orderService.saveOrder(orderRequest);
         Consumer<Order> fnInvoice = order1 -> {
-            Invoice invoice = new Invoice(null, "PENDING", order1);
+            Invoice invoice = new Invoice(null, order1);
             invoiceService.save(invoice);
         };
         Map<String, Object> extras = new HashMap<>();

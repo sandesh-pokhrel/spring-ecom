@@ -60,8 +60,17 @@ public class UserController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    @ApiOperation(value = "Uses registration.")
+    @ApiOperation(value = "User registration.")
     public User saveUser(@Valid @RequestBody User user) throws MessagingException, DocumentException {
         return userService.saveUser(user);
+    }
+
+    @PutMapping("/verify/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "User verification.")
+    public User verifyUser(@PathVariable Integer id) {
+        User user = this.userService.getById(id);
+        user.setIsVerified(true);
+        return this.userService.verifyUser(user);
     }
 }

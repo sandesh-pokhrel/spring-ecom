@@ -29,6 +29,11 @@ public class UserService {
         return userRepository.findByEmailAndEnabled(email, true);
     }
 
+    public User getById(Integer id) {
+        return userRepository
+                .findById(id).orElseThrow(() -> new UserNotFoundException("User not found!"));
+    }
+
     @Transactional
     public User getByEmail(String email) {
         return userRepository
@@ -52,5 +57,9 @@ public class UserService {
         User savedUser = userRepository.save(user);
         mailUtil.sendMail(savedUser.getEmail(), MailType.USER_CREATION, null);
         return savedUser;
+    }
+
+    public User verifyUser(User user) {
+        return userRepository.save(user);
     }
 }

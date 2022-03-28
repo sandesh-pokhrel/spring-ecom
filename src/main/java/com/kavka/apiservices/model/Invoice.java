@@ -20,7 +20,6 @@ public class Invoice {
     @GenericGenerator(name = "invoice_id_generator", strategy = "com.kavka.apiservices.model.generator.InvoiceIdGenerator")
     @GeneratedValue(generator = "invoice_id_generator")
     private String id;
-    private String status;
 
     @OneToOne
     @JoinColumn(name = "order_id", referencedColumnName = "id",
