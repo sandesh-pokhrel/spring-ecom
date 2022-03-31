@@ -1,0 +1,39 @@
+version: "3.3"
+services:
+  mysql:
+    image: mysql
+    restart: always
+    container_name: mysql
+    environment:
+      MYSQL_USER: sandesh
+      MYSQL_PASSWORD: sagarmatha
+      MYSQL_ROOT_PASSWORD: sagarmatha
+      MYSQL_DATABASE: kavka
+    ports:
+      - "9990:3306"
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    container_name: phpmyadmin
+    depends_on:
+      - mysql
+    links:
+      - mysql
+    ports:
+      - "9995:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+  kavka:
+    image: sandeshpokhrel/kavka
+    restart: always
+    container_name: kavka
+    depends_on:
+      - mysql
+    links:
+      - mysql
+    environment:
+      SPRING_PROFILES_ACTIVE: dmysql
+    ports:
+      - "9999:9999"
