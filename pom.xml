@@ -11,6 +11,7 @@
     <groupId>com.kavka</groupId>
     <artifactId>kavka-services</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
     <name>kavka-services</name>
     <description>Kavka backend API.</description>
     <properties>
@@ -22,8 +23,9 @@
         <mysql.version>8.0.27</mysql.version>
         <apache-lang3.version>3.12.0</apache-lang3.version>
         <apache-io.version>2.11.0</apache-io.version>
-        <spring-boot.repackage.skip>true</spring-boot.repackage.skip>
+<!--        <spring-boot.repackage.skip>true</spring-boot.repackage.skip>-->
         <hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
+        <start-class>com.kavka.apiservices.ApiServicesApplication</start-class>
     </properties>
     <dependencies>
         <dependency>
@@ -129,6 +131,9 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <fork>true</fork>
+                    <executable>true</executable>
+                    <mainClass>com.kavka.apiservices.ApiServicesApplication</mainClass>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>
@@ -136,6 +141,13 @@
                         </exclude>
                     </excludes>
                 </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
