@@ -11,13 +11,13 @@ services:
       MYSQL_DATABASE: kavka
     ports:
       - "9990:3306"
+    networks:
+      - kavka-net
   phpmyadmin:
     image: phpmyadmin/phpmyadmin
     restart: always
     container_name: phpmyadmin
     depends_on:
-      - mysql
-    links:
       - mysql
     ports:
       - "9995:80"
@@ -25,15 +25,21 @@ services:
       PMA_HOST: mysql
       PMA_PORT: 3306
       PMA_ARBITRARY: 1
+    networks:
+      - kavka-net
   kavka:
     image: sandeshpokhrel/kavka
     restart: always
     container_name: kavka
     depends_on:
       - mysql
-    links:
-      - mysql
     environment:
       SPRING_PROFILES_ACTIVE: dmysql
     ports:
       - "9999:9999"
+    networks:
+      - kavka-net
+
+networks:
+  kavka-net:
+    driver: bridge
