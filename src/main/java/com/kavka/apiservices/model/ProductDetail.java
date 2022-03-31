@@ -27,7 +27,7 @@ public class ProductDetail {
     private Double price;
     private String imageUrl;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id", referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "fk_product_product_id"))
     private Product product;

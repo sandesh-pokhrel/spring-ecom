@@ -32,4 +32,6 @@ values ('AD8Y2', true, 'Product category name', 'product_category_thumbnail_url'
 insert into product (code, description, image_url, name, product_category_id)
 values ('PRCODE', 'Very long product description goes here', 'product_dummy_image_url', 'Product name', 1);
 insert into product_detail (code, colors, image_url, name, price, product_id)
-values ('3*3-RT8YZ', null, 'product_detail_image_url', 'Product detail name', 175, 1);
+values ('RT8YZ-3*3', null, 'product_detail_image_url', 'Product detail name', 175, 1);
+insert into product_detail (code, colors, image_url, name, price, product_id)
+values ('M6KLY-6*7', null, 'product_detail_image_url_second', 'Product detail name second', 85, 1);

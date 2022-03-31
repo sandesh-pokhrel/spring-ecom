@@ -98,9 +98,10 @@ public class OrderService {
                 .taxTotal(orderRequest.getTaxTotal())
                 .shippingMethod(orderRequest.getShippingMethod())
                 .user(user)
-                .orderItems(orderItems)
                 .status(OrderStatus.PENDING)
                 .build();
+        orderItems.forEach(orderItem -> orderItem.setOrder(order));
+        order.setOrderItems(orderItems);
         return this.orderRepository.save(order);
     }
 

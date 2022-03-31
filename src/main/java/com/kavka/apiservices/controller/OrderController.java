@@ -7,6 +7,7 @@ import com.kavka.apiservices.model.Invoice;
 import com.kavka.apiservices.model.Order;
 import com.kavka.apiservices.model.OrderRequestMode;
 import com.kavka.apiservices.request.OrderRequest;
+import com.kavka.apiservices.response.OrderResponse;
 import com.kavka.apiservices.service.InvoiceService;
 import com.kavka.apiservices.service.OrderService;
 import com.kavka.apiservices.util.MailUtil;
@@ -73,11 +74,11 @@ public class OrderController {
 
     @GetMapping("/send-to-orderdesk/{orderId}")
     @ResponseStatus(HttpStatus.OK)
-    public void sendOrderToOrderDesk(@PathVariable Integer orderId) {
+    public OrderResponse sendOrderToOrderDesk(@PathVariable Integer orderId) {
         Order order = this.orderService.getById(orderId);
         OrderDto orderDto = this.orderService.buildRequest(order);
-        ResponseEntity<Object> response =
-                this.restTemplate.exchange(orderdeskUrl, HttpMethod.POST, new HttpEntity<>(orderDto), Object.class);
-
+        ResponseEntity<OrderResponse> response =
+                this.restTemplate.exchange(orderdeskUrl, HttpMethod.POST, new HttpEntity<>(orderDto), OrderResponse.class);
+        return response.getBody();
     }
 }

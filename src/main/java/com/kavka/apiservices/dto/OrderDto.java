@@ -3,7 +3,6 @@ package com.kavka.apiservices.dto;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kavka.apiservices.model.Billing;
-import com.kavka.apiservices.model.OrderItem;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 
@@ -36,7 +35,7 @@ public class OrderDto {
     @JsonProperty("date_updated")
     private Date dateUpdated;
     private Billing shipping;
-    private Billing billing;
+    private Billing customer;
     @JsonProperty("return_address")
     private Billing returnAddress;
     @JsonProperty("checkout_data")
@@ -45,4 +44,20 @@ public class OrderDto {
     private Map<String, String> orderMetadata;
     @JsonProperty("order_items")
     private List<OrderItem> orderItems;
+
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class OrderItem {
+        private String name;
+        private Double price;
+        private Double weight;
+        private String code;
+        private Integer quantity;
+        @JsonProperty("variation_list")
+        private Map<String, String> variationList;
+        private Map<String, String> metadata;
+    }
 }
