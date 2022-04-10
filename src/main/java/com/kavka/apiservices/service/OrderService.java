@@ -50,12 +50,12 @@ public class OrderService {
         this.orderRequestItemToModelMapper = orderRequestItemToModelMapper;
     }
 
-    private void validateCustomer(@Valid Billing billing) {
+    protected void validateCustomer(@Valid Billing billing) {
         Set<ConstraintViolation<Billing>> violations = validator.validate(billing);
         if (!violations.isEmpty()) throw new ConstraintViolationException(violations);
     }
 
-    private List<OrderItem> buildOrderItemFromRequest(List<OrderRequest.OrderItem> orderItems) {
+    protected List<OrderItem> buildOrderItemFromRequest(List<OrderRequest.OrderItem> orderItems) {
         return orderItems.stream().map(orderItem -> this.orderRequestItemToModelMapper
                 .from(orderItem, productDetailService)).collect(Collectors.toList());
     }
