@@ -39,6 +39,16 @@ services:
       - "9999:9999"
     networks:
       - kavka-net
+  kavka-front:
+    image: sandeshpokhrel/kavka-front
+    restart: always
+    container_name: kavka-front
+    depends_on:
+      - kavka
+    ports:
+      - "9991:80"
+    networks:
+      - kavka-net
 
 networks:
   kavka-net:
