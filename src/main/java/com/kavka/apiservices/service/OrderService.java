@@ -8,6 +8,7 @@ import com.kavka.apiservices.model.mapper.OrderRequestItemToModelMapper;
 import com.kavka.apiservices.repository.OrderRepository;
 import com.kavka.apiservices.request.OrderRequest;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -60,15 +61,15 @@ public class OrderService {
                 .from(orderItem, productDetailService)).collect(Collectors.toList());
     }
 
-    private Billing getBilling(OrderRequest orderRequest, Principal principal) {
+    private Billing getBilling(OrderRequest orderRequest, String name) {
         Billing billing;
 
         switch (orderRequest.getOrderRequestMode()) {
             case SPECIFIED:
-                billing = this.billingService.getByIdAndEmail(orderRequest.getBillingId(), principal.getName());
+                billing = this.billingService.getByIdAndEmail(orderRequest.getBillingId(), name);
                 break;
             case DEFAULT:
-                billing = this.billingService.getByEmailAndIsDefault(principal.getName(), true);
+                billing = this.billingService.getByEmailAndIsDefault(name, true);
                 break;
             case CUSTOM:
             case GUEST:
@@ -85,10 +86,10 @@ public class OrderService {
         return this.orderRepository.findById(id).orElseThrow(() -> new InvalidOperationException("Invalid order id!"));
     }
 
-    public Order saveOrder(OrderRequest orderRequest) {
-        Principal principal = SecurityContextHolder.getContext().getAuthentication();
-        Billing billing = getBilling(orderRequest, principal);
-        User user = this.userService.getByEmail(principal.getName());
+    public Order saveOrder(OrderRequest orderRequest, Authentication authentication) {
+        String name = authentication.getName();
+        Billing billing = getBilling(orderRequest, name);
+        User user = this.userService.getByEmail(name);
         List<OrderItem> orderItems = buildOrderItemFromRequest(orderRequest.getOrderItems());
         Order order = Order.builder()
                 .id(null)
