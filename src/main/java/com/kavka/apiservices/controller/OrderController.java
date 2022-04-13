@@ -86,7 +86,7 @@ public class OrderController {
         }
 
         if (!user.getIsVerified())
-            mailUtil.sendMail(name, MailType.INVOICE_MAIL, extras);
+            mailUtil.sendMail(adminEmail, MailType.INVOICE_MAIL, extras);
         return order;
     }
 
