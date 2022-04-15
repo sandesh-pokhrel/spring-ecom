@@ -1,8 +1,8 @@
 insert into users (company, email, enabled, first_name, is_verified, last_name, password)
-values (null, 'admin@kavka.com', true, 'admin_fname', false, 'admin_lname',
+values ('kavka', 'admin@kavka.com', true, 'admin_fname', false, 'admin_lname',
         '$2a$12$wuqV4zO0jBAvlkO3RDBQ.edBZ2bYTjpW59xBZLKIHyZhJZ.3WMqe2');
 insert into users (company, email, enabled, first_name, is_verified, last_name, password)
-values (null, 'user@kavka.com', true, 'user_fname', false, 'user_lname',
+values ('company_one', 'user@kavka.com', true, 'user_fname', false, 'user_lname',
         '$2a$12$.Qw7/YMRMkCKCnMkc3fxh.Exj9IcTl9zQlFRI8EDz0KxUSMC4KJLa');
 
 insert into authority (role, user_id)

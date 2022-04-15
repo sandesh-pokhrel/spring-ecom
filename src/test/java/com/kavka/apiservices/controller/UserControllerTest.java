@@ -52,6 +52,7 @@ class UserControllerTest {
     void setup() {
         objectMapper = new ObjectMapper();
         user = User.builder()
+                .company("company_name")
                 .email("hello@email.com")
                 .firstName("first name")
                 .lastName("last name")

@@ -39,6 +39,7 @@ public class User implements Serializable {
     private String password;
     private String firstName;
     private String lastName;
+    @NotBlank(message = "{model.field.company.validation.blank}")
     private String company;
     private Boolean enabled;
     private Boolean isVerified;
