@@ -2,6 +2,8 @@ package com.kavka.apiservices.service;
 
 import com.kavka.apiservices.dto.mapper.OrderToDtoMapper;
 import com.kavka.apiservices.model.Billing;
+import com.kavka.apiservices.model.OrderRequestMode;
+import com.kavka.apiservices.model.User;
 import com.kavka.apiservices.model.mapper.OrderRequestItemToModelMapper;
 import com.kavka.apiservices.repository.OrderRepository;
 import com.kavka.apiservices.request.OrderRequest;
@@ -11,7 +13,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContext;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -21,18 +22,18 @@ import javax.validation.metadata.ConstraintDescriptor;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
 
     private OrderService orderService;
+    private OrderRequest orderRequest;
 
     @Mock
-    private SecurityContext securityContext;
+    private Authentication authentication;
     @Mock
     private OrderRepository orderRepository;
     @Mock
@@ -112,6 +113,11 @@ class OrderServiceTest {
         this.orderService = new OrderService(orderRepository, billingService, userService,
                 productDetailService, validator,
                 orderToDtoMapper, orderRequestItemToModelMapper);
+
+        this.orderRequest = OrderRequest.builder()
+                .orderRequestMode(OrderRequestMode.DEFAULT)
+                .billingId(4)
+                .build();
     }
 
     @Test
@@ -123,11 +129,8 @@ class OrderServiceTest {
                 .company("some_company")
                 .build();
         Set<ConstraintViolation<Billing>> violations = new HashSet<>();
-
         violations.add(setupConstraintViolation());
-
         when(validator.validate(any(Billing.class))).thenReturn(violations);
-
         assertThrows(ConstraintViolationException.class, () -> this.orderService.validateCustomer(billing));
     }
 
@@ -140,17 +143,26 @@ class OrderServiceTest {
                 .company("some_company")
                 .build();
         Set<ConstraintViolation<Billing>> violations = new HashSet<>();
-
         when(validator.validate(any(Billing.class))).thenReturn(violations);
-
         assertDoesNotThrow(() -> this.orderService.validateCustomer(billing));
     }
 
+    @Test
+    void getBilling_default_mode() {
+        Billing billing = Billing.builder().id(1005).build();
+        when(this.billingService.getByEmailAndIsDefault(anyString(), anyBoolean())).thenReturn(billing);
+        Billing billing1 = this.orderService.getBilling(orderRequest, "some_email@email.com");
+        assertNotNull(billing1, "Billing cannot be null");
+        assertEquals(1005, billing1.getId());
+
+    }
 
     @Test
     void saveOrder() {
-
-        when(securityContext.getAuthentication()).thenReturn(null);
+        Billing billing = Billing.builder().id(1005).build();
+        User user = User.builder().id(1005).build();
+        when(this.billingService.getByEmailAndIsDefault(anyString(), anyBoolean())).thenReturn(billing);
+        Billing billing1 = this.orderService.getBilling(orderRequest, "some_email@email.com");
 
     }
 }

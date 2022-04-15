@@ -61,7 +61,7 @@ public class OrderService {
                 .from(orderItem, productDetailService)).collect(Collectors.toList());
     }
 
-    private Billing getBilling(OrderRequest orderRequest, String name) {
+    protected Billing getBilling(OrderRequest orderRequest, String name) {
         Billing billing;
 
         switch (orderRequest.getOrderRequestMode()) {
