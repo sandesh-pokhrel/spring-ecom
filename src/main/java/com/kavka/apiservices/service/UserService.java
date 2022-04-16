@@ -8,7 +8,9 @@ import com.kavka.apiservices.model.User;
 import com.kavka.apiservices.repository.UserRepository;
 import com.kavka.apiservices.util.MailUtil;
 import com.lowagie.text.DocumentException;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -18,12 +20,21 @@ import java.util.Collections;
 import java.util.Objects;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final MailUtil mailUtil;
+
+    @Value("${role.admin}")
+    private String adminRole;
+
+    public boolean verifyIfCanAccessResource(Integer userId, Authentication authentication) {
+        User user = getByEmail(authentication.getName());
+        return Objects.equals(user.getId(), userId)
+                || user.getAuthorities().stream().anyMatch(authority -> authority.getRole().equals(adminRole));
+    }
 
     public User getEnabledUserByEmail(String email) {
         return userRepository.findByEmailAndEnabled(email, true);

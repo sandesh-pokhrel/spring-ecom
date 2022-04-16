@@ -15,25 +15,25 @@ import com.kavka.apiservices.service.UserService;
 import com.kavka.apiservices.util.MailUtil;
 import com.lowagie.text.DocumentException;
 import io.swagger.annotations.Api;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import javax.mail.MessagingException;
-import java.security.Principal;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
 @RestController
 @RequestMapping("/orders")
+@RequiredArgsConstructor
 @Api(tags = "Order Controller",
         description = "Set of endpoints for order purpose.")
 public class OrderController {
@@ -50,17 +50,19 @@ public class OrderController {
     @Value("${mail.admin}")
     private String adminEmail;
 
-    @Autowired
-    public OrderController(OrderService orderService,
-                           InvoiceService invoiceService,
-                           UserService userService,
-                           RestTemplate restTemplate,
-                           MailUtil mailUtil) {
-        this.orderService = orderService;
-        this.invoiceService = invoiceService;
-        this.restTemplate = restTemplate;
-        this.userService = userService;
-        this.mailUtil = mailUtil;
+    @Value("${resource.unaccessible}")
+    private String illegalResourceMessage;
+
+    @GetMapping("/{id}")
+    public Order getById(@PathVariable Integer id, Authentication authentication) {
+        if (!this.orderService.isResourceAccessible(id, authentication))
+            throw new InvalidOperationException(illegalResourceMessage);
+        return this.orderService.getById(id);
+    }
+
+    @GetMapping("/user/{id}")
+    public List<Order> getAllByUser(@PathVariable Integer id) {
+        return this.orderService.getAllByUser(id);
     }
 
     @PostMapping

@@ -9,14 +9,12 @@ import com.kavka.apiservices.repository.OrderRepository;
 import com.kavka.apiservices.request.OrderRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.Validator;
-import java.security.Principal;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -49,6 +47,11 @@ public class OrderService {
         this.validator = validator;
         this.orderToDtoMapper = orderToDtoMapper;
         this.orderRequestItemToModelMapper = orderRequestItemToModelMapper;
+    }
+
+    public boolean isResourceAccessible(Integer orderId, Authentication authentication) {
+        Order order = this.getById(orderId);
+        return  (authentication.getName().equals(adminEmail) || authentication.getName().equals(order.getUser().getEmail()));
     }
 
     protected void validateCustomer(@Valid Billing billing) {
@@ -84,6 +87,11 @@ public class OrderService {
 
     public Order getById(Integer id) {
         return this.orderRepository.findById(id).orElseThrow(() -> new InvalidOperationException("Invalid order id!"));
+    }
+
+    public List<Order> getAllByUser(Integer userId) {
+        User user = userService.getById(userId);
+        return this.orderRepository.findAllByUser(user);
     }
 
     public Order saveOrder(OrderRequest orderRequest, Authentication authentication) {
