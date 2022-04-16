@@ -70,7 +70,9 @@ public class UserService {
         return savedUser;
     }
 
-    public User verifyUser(User user) {
-        return userRepository.save(user);
+    public User verifyUser(User user) throws MessagingException, DocumentException {
+        User savedUser = userRepository.save(user);
+        mailUtil.sendMail(savedUser.getEmail(), MailType.USER_VERIFICATION, null);
+        return savedUser;
     }
 }

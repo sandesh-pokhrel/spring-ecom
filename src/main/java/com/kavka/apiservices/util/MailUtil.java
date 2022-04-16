@@ -4,6 +4,7 @@ import com.kavka.apiservices.common.MailProperties;
 import com.kavka.apiservices.common.MailType;
 import com.kavka.apiservices.model.Order;
 import com.lowagie.text.DocumentException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -25,19 +26,16 @@ import java.util.stream.Collectors;
 
 @SuppressWarnings("SpringJavaInjectionPointsAutowiringInspection")
 @Component
+@RequiredArgsConstructor
 public class MailUtil {
 
     private final JavaMailSender javaMailSender;
     private final MailProperties mailProperties;
 
-    @Autowired
-    public MailUtil(JavaMailSender javaMailSender, MailProperties mailProperties) {
-        this.javaMailSender = javaMailSender;
-        this.mailProperties = mailProperties;
-    }
-
     @Value("${mail.message.registration}")
     private String registrationBody;
+    @Value("${mail.message.verification}")
+    private String verificationBody;
     @Value("${mail.message.invoice}")
     private String invoiceBody;
 
@@ -97,6 +95,10 @@ public class MailUtil {
 
         } else if (mailType == MailType.RESET_PASSWORD) {
             System.out.println("Reset password request");
+        } else if (mailType == MailType.USER_VERIFICATION) {
+            helper.setSubject("Verification Successful");
+            String bodyText = verificationBody;
+            helper.setText(bodyText, true);
         } else if (mailType == MailType.INVOICE_MAIL) {
             helper.setSubject("Invoice");
             String bodyText = invoiceBodyFromTemplate(invoiceBody, (Order) extras.get("data"));

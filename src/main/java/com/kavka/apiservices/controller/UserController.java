@@ -67,8 +67,8 @@ public class UserController {
 
     @PutMapping("/verify/{id}")
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "User verification.")
-    public User verifyUser(@PathVariable Integer id) {
+    @ApiOperation(value = "User verification. Only admin user can perform this action.")
+    public User verifyUser(@PathVariable Integer id) throws MessagingException, DocumentException {
         User user = this.userService.getById(id);
         user.setIsVerified(true);
         return this.userService.verifyUser(user);
