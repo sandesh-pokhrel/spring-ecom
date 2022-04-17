@@ -23,12 +23,17 @@ public class BillingController {
     @Value("${mail.admin}")
     private String adminEmail;
 
-    @GetMapping("/{id}")
-    public Billing getById(@PathVariable Integer id, Authentication authentication) {
-        Billing billing = this.billingService.getById(id);
+    private void throwIfIllegalUser(Billing billing, Authentication authentication) {
+
         if (!(authentication.getName().equals(adminEmail)
                 || authentication.getName().equals(billing.getUser().getEmail())))
             throw new InvalidOperationException(illegalResourceMessage);
+    }
+
+    @GetMapping("/{id}")
+    public Billing getById(@PathVariable Integer id, Authentication authentication) {
+        Billing billing = this.billingService.getById(id);
+        throwIfIllegalUser(billing, authentication);
         return billing;
     }
 
@@ -40,5 +45,12 @@ public class BillingController {
     @PostMapping
     public Billing save(@RequestBody Billing billing) {
         return this.billingService.saveBilling(billing);
+    }
+
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable Integer id, Authentication authentication) {
+        Billing billing = this.billingService.getById(id);
+        throwIfIllegalUser(billing, authentication);
+        this.billingService.delete(billing);
     }
 }

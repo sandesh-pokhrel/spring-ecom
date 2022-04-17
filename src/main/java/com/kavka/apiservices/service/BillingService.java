@@ -61,4 +61,8 @@ public class BillingService {
     public Billing saveBilling(Billing billing) {
         return this.billingRepository.save(billing);
     }
+
+    public void delete(Billing billing) {
+        this.billingRepository.delete(billing);
+    }
 }
