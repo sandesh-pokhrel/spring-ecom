@@ -25,7 +25,7 @@ import java.util.Objects;
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = "email", name = "unq_user_email")
 })
-@JsonIgnoreProperties(value = {"customers", "orders"})
+@JsonIgnoreProperties(value = {"customers", "orders", "billings"})
 @ApiModel(description = "This is the user table related to authentication.")
 public class User implements Serializable {
 
