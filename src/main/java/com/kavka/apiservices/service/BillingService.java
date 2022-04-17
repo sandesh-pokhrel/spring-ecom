@@ -1,17 +1,21 @@
 package com.kavka.apiservices.service;
 
 import com.kavka.apiservices.exception.InvalidOperationException;
+import com.kavka.apiservices.exception.NotFoundException;
 import com.kavka.apiservices.model.Billing;
 import com.kavka.apiservices.model.User;
 import com.kavka.apiservices.repository.BillingRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Objects;
 
 @Service
+@RequiredArgsConstructor
 public class BillingService {
 
     private final BillingRepository billingRepository;
@@ -20,10 +24,9 @@ public class BillingService {
     @Value("${mail.admin}")
     private String adminEmail;
 
-    @Autowired
-    public BillingService(BillingRepository billingRepository, UserService userService) {
-        this.billingRepository = billingRepository;
-        this.userService = userService;
+    public Billing getById(Integer id) {
+        return this.billingRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Billing not found!"));
     }
 
     public List<Billing> getAllByUser(Integer userId) {

@@ -49,12 +49,6 @@ public class OrderService {
         this.orderRequestItemToModelMapper = orderRequestItemToModelMapper;
     }
 
-    public boolean isResourceAccessible(Integer orderId, Authentication authentication) {
-        Order order = this.getById(orderId);
-        return  (authentication.getName().equals(adminEmail) || authentication.getName().equals(order.getUser().getEmail()));
-    }
-
-
     protected void validateCustomer(@Valid Billing billing) {
         Set<ConstraintViolation<Billing>> violations = validator.validate(billing);
         if (!violations.isEmpty()) throw new ConstraintViolationException(violations);

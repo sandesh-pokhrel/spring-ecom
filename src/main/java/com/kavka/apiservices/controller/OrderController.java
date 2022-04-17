@@ -61,9 +61,11 @@ public class OrderController {
 
     @GetMapping("/{id}")
     public Order getById(@PathVariable Integer id, Authentication authentication) {
-        if (!this.orderService.isResourceAccessible(id, authentication))
+        Order order = this.orderService.getById(id);
+        if (!(authentication.getName().equals(adminEmail)
+                || authentication.getName().equals(order.getUser().getEmail())))
             throw new InvalidOperationException(illegalResourceMessage);
-        return this.orderService.getById(id);
+        return order;
     }
 
     @GetMapping("/users/{id}")
