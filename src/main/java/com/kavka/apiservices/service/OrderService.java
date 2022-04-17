@@ -54,6 +54,7 @@ public class OrderService {
         return  (authentication.getName().equals(adminEmail) || authentication.getName().equals(order.getUser().getEmail()));
     }
 
+
     protected void validateCustomer(@Valid Billing billing) {
         Set<ConstraintViolation<Billing>> violations = validator.validate(billing);
         if (!violations.isEmpty()) throw new ConstraintViolationException(violations);
@@ -83,6 +84,10 @@ public class OrderService {
                 throw new InvalidOperationException("Order request mode is invalid!");
         }
         return billing;
+    }
+
+    public List<Order> getAll() {
+        return this.orderRepository.findAll();
     }
 
     public Order getById(Integer id) {

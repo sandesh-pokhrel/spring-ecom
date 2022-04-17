@@ -26,6 +26,11 @@ public class BillingService {
         this.userService = userService;
     }
 
+    public List<Billing> getAllByUser(Integer userId) {
+        User user = this.userService.getById(userId);
+        return this.billingRepository.findAllByUser(user);
+    }
+
     public Billing getByIdAndEmail(Integer id, String email) {
         User user = this.userService.getByEmail(email);
         if (Objects.isNull(id)) throw new InvalidOperationException("Customer info not found!");
@@ -48,5 +53,9 @@ public class BillingService {
             else if (billings.size() > 1)
                 throw new RuntimeException("Kavka admin customer count should not exceed one!");
         return billings;
+    }
+
+    public Billing saveBilling(Billing billing) {
+        return this.billingRepository.save(billing);
     }
 }

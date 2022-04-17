@@ -5,7 +5,6 @@ import com.kavka.apiservices.common.MailType;
 import com.kavka.apiservices.model.Order;
 import com.lowagie.text.DocumentException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;

@@ -53,6 +53,12 @@ public class OrderController {
     @Value("${resource.unaccessible}")
     private String illegalResourceMessage;
 
+    @GetMapping
+
+    public List<Order> getAll() {
+        return this.orderService.getAll();
+    }
+
     @GetMapping("/{id}")
     public Order getById(@PathVariable Integer id, Authentication authentication) {
         if (!this.orderService.isResourceAccessible(id, authentication))
@@ -60,7 +66,7 @@ public class OrderController {
         return this.orderService.getById(id);
     }
 
-    @GetMapping("/user/{id}")
+    @GetMapping("/users/{id}")
     public List<Order> getAllByUser(@PathVariable Integer id) {
         return this.orderService.getAllByUser(id);
     }

@@ -1,6 +1,7 @@
 package com.kavka.apiservices.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.annotations.ApiModel;
@@ -32,13 +33,17 @@ public class Billing {
     private String lastName;
     private String company;
     @JsonProperty("address1")
+    @NotBlank(message = "Address one cannot be blank")
     private String addressOne;
     @JsonProperty("address2")
     private String addressTwo;
+    @NotBlank(message = "City cannot be blank")
     private String city;
     private String state;
     @JsonProperty("postal_code")
+    @NotBlank(message = "Postal code cannot be blank")
     private String postalCode;
+    @NotBlank(message = "Country cannot be blank")
     private String country;
     private String phone;
     private Boolean isDefault;
@@ -48,6 +53,12 @@ public class Billing {
             foreignKey = @ForeignKey(name = "fk_customer_user_id"))
     @JsonBackReference
     private User user;
+
+    @JsonProperty("userId")
+    private void setUser(Integer userId) {
+        this.user = new User();
+        user.setId(userId);
+    }
 
     @Override
     public boolean equals(Object o) {
