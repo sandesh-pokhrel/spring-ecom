@@ -92,7 +92,8 @@ public class GlobalExHandler {
         ex.printStackTrace();
         StringBuilder exceptionMessageBuilder = new StringBuilder(Strings.EMPTY);
         List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
-        exceptionMessageBuilder.append(fieldErrors.get(0).getDefaultMessage());
+        if (fieldErrors.size() > 0) exceptionMessageBuilder.append(fieldErrors.get(0).getDefaultMessage());
+        else exceptionMessageBuilder.append(ex.getBindingResult().getAllErrors().get(0).getDefaultMessage());
         //fieldErrors.forEach(fieldError -> exceptionMessageBuilder.append(fieldError.getDefaultMessage()));
         status.setExMessage(exceptionMessageBuilder.toString());
         return ResponseEntity.badRequest().body(status);

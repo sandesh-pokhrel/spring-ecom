@@ -26,16 +26,8 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @CreationTimestamp
-    @Temporal(TemporalType.DATE)
-    @JsonProperty("date_added")
-    private Date dateAdded;
-
-    @UpdateTimestamp
-    @Temporal(TemporalType.DATE)
-    @JsonProperty("date_updated")
-    private Date dateUpdated;
     private String shippingMethod;
+    private Double totalAmount;
     private Double shippingTotal;
     private Double handlingTotal;
     private Double taxTotal;

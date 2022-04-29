@@ -1,5 +1,6 @@
 package com.kavka.apiservices.request;
 
+import com.kavka.apiservices.validator.constraint.ValidCreditApplication;
 import io.swagger.annotations.ApiModel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -13,6 +14,7 @@ import javax.validation.constraints.Positive;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ValidCreditApplication
 @ApiModel(description = "Request to verify user credit application.")
 public class CreditApplicationVerificationRequest {
 

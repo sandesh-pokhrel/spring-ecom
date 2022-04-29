@@ -39,7 +39,7 @@ public class CreditApplicationDetailController {
                                   Authentication authentication) throws MessagingException, DocumentException {
         User verifiedBy = this.userService.getByEmail(authentication.getName());
         String userEmail = this.creditApplicationDetailService.verify(id, verificationRequest, verifiedBy);
-        this.mailUtil.sendMail(userEmail, MailType.USER_CREDIT_VERIFICATION, new HashMap<String, Object>(){{
+        this.mailUtil.sendMail(userEmail, MailType.USER_CREDIT_VERIFICATION, new HashMap<String, Object>() {{
             put("data", verificationRequest.getIsApproved());
         }});
     }

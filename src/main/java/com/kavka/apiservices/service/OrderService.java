@@ -5,6 +5,7 @@ import com.kavka.apiservices.dto.mapper.OrderToDtoMapper;
 import com.kavka.apiservices.exception.InvalidOperationException;
 import com.kavka.apiservices.model.*;
 import com.kavka.apiservices.model.mapper.OrderRequestItemToModelMapper;
+import com.kavka.apiservices.model.mapper.OrderRequestToModelMapper;
 import com.kavka.apiservices.model.mapper.PaymentRequestToModelMapper;
 import com.kavka.apiservices.repository.OrderRepository;
 import com.kavka.apiservices.request.OrderRequest;
@@ -33,6 +34,7 @@ public class OrderService {
     private final OrderToDtoMapper orderToDtoMapper;
     private final OrderRequestItemToModelMapper orderRequestItemToModelMapper;
     private final PaymentRequestToModelMapper paymentRequestToModelMapper;
+    private final OrderRequestToModelMapper orderRequestToModelMapper;
 
     @Value("${mail.admin}")
     private String adminEmail;
@@ -87,20 +89,12 @@ public class OrderService {
         User user = this.userService.getByEmail(name);
         List<OrderItem> orderItems = buildOrderItemFromRequest(orderRequest.getOrderItems());
         OrderPayment orderPayment = paymentRequestToModelMapper.from(orderRequest.getPayment());
-        Order order = Order.builder()
-                .id(null)
-                .billing(billing)
-                .handlingTotal(orderRequest.getHandlingTotal())
-                .shippingTotal(orderRequest.getShippingTotal())
-                .taxTotal(orderRequest.getTaxTotal())
-                .shippingMethod(orderRequest.getShippingMethod())
-                .user(user)
-                .status(OrderStatus.CONFIRMED)
-                .build();
+        Order order = orderRequestToModelMapper.from(orderRequest, billing, orderPayment, OrderStatus.CONFIRMED);
         orderItems.forEach(orderItem -> orderItem.setOrder(order));
         orderPayment.setOrder(order);
         order.setOrderPayment(orderPayment);
         order.setOrderItems(orderItems);
+        order.setUser(user);
         return this.orderRepository.save(order);
     }
 

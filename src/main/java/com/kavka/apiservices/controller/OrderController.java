@@ -3,13 +3,13 @@ package com.kavka.apiservices.controller;
 import com.kavka.apiservices.common.MailType;
 import com.kavka.apiservices.dto.OrderDto;
 import com.kavka.apiservices.exception.InvalidOperationException;
-import com.kavka.apiservices.model.Invoice;
-import com.kavka.apiservices.model.Order;
-import com.kavka.apiservices.model.OrderRequestMode;
+import com.kavka.apiservices.model.*;
 import com.kavka.apiservices.request.OrderRequest;
 import com.kavka.apiservices.response.OrderResponse;
 import com.kavka.apiservices.service.InvoiceService;
 import com.kavka.apiservices.service.OrderService;
+import com.kavka.apiservices.service.UserService;
+import com.kavka.apiservices.service.UserStoreCreditService;
 import com.kavka.apiservices.util.MailUtil;
 import com.lowagie.text.DocumentException;
 import io.swagger.annotations.Api;
@@ -24,9 +24,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import javax.mail.MessagingException;
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.function.Consumer;
 
 @RestController
@@ -38,6 +38,8 @@ public class OrderController {
 
     private final OrderService orderService;
     private final InvoiceService invoiceService;
+    private final UserStoreCreditService userStoreCreditService;
+    private final UserService userService;
     private final RestTemplate restTemplate;
     private final MailUtil mailUtil;
 
@@ -72,7 +74,8 @@ public class OrderController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Order saveOrder(@RequestBody OrderRequest orderRequest, Authentication authentication) throws MessagingException, DocumentException {
+    public Order saveOrder(@Valid @RequestBody OrderRequest orderRequest,
+                           Authentication authentication) throws MessagingException, DocumentException {
         // TODO: custom request is disabled for now, enable later
         if (orderRequest.getOrderRequestMode() == OrderRequestMode.GUEST ||
                 orderRequest.getOrderRequestMode() == OrderRequestMode.CUSTOM)
@@ -84,11 +87,11 @@ public class OrderController {
             invoiceService.save(invoice);
         };
         // Order confirmation mail
-        mailUtil.sendMail(name, MailType.INVOICE_MAIL, new HashMap<String, Object>(){{
+        mailUtil.sendMail(name, MailType.INVOICE_MAIL, new HashMap<String, Object>() {{
             put("data", order);
             put("callback", fnInvoice);
         }});
-        mailUtil.sendMail(adminEmail, MailType.INVOICE_MAIL, new HashMap<String, Object>(){{
+        mailUtil.sendMail(adminEmail, MailType.INVOICE_MAIL, new HashMap<String, Object>() {{
             put("data", order);
         }});
         return order;

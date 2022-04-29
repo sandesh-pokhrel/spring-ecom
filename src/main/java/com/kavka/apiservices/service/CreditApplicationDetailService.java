@@ -6,6 +6,7 @@ import com.kavka.apiservices.model.CreditApplicationDetail;
 import com.kavka.apiservices.model.CreditApplicationStatus;
 import com.kavka.apiservices.model.User;
 import com.kavka.apiservices.model.UserStoreCredit;
+import com.kavka.apiservices.model.mapper.CreditVerificationRequestToModelMapper;
 import com.kavka.apiservices.repository.CreditApplicationDetailRepository;
 import com.kavka.apiservices.request.CreditApplicationVerificationRequest;
 import lombok.RequiredArgsConstructor;
@@ -19,8 +20,8 @@ import java.util.Objects;
 public class CreditApplicationDetailService {
 
     private final CreditApplicationDetailRepository creditApplicationDetailRepository;
-    private final UserService userService;
     private final UserStoreCreditService userStoreCreditService;
+    private final CreditVerificationRequestToModelMapper creditVerificationRequestToModelMapper;
 
     public CreditApplicationDetail getById(Integer id) {
         return this.creditApplicationDetailRepository.findById(id)
@@ -49,8 +50,6 @@ public class CreditApplicationDetailService {
         CreditApplicationDetail creditApplicationDetail = this.getById(id);
         if (creditApplicationDetail.getCreditApplicationStatus() != CreditApplicationStatus.PENDING)
             throw new InvalidOperationException("Application is already verified!");
-        if (verificationRequest.getIsApproved() && Objects.isNull(verificationRequest.getCreditLine()))
-            throw new InvalidOperationException("Credit line cannot be null for approved application!");
 
         // set credit application detail fields
         creditApplicationDetail.setCreditApplicationStatus((verificationRequest.getIsApproved()
@@ -63,13 +62,8 @@ public class CreditApplicationDetailService {
         if (!verificationRequest.getIsApproved()) {
             this.creditApplicationDetailRepository.save(creditApplicationDetail);
         } else {
-            UserStoreCredit userStoreCredit = UserStoreCredit.builder()
-                    .creditApplicationDetail(creditApplicationDetail)
-                    .creditLine(verificationRequest.getCreditLine())
-                    .availableBalance(verificationRequest.getCreditLine())
-                    .currentBalance(0D)
-                    .user(creditApplicationDetail.getUser())
-                    .build();
+            UserStoreCredit userStoreCredit = creditVerificationRequestToModelMapper
+                    .from(verificationRequest, creditApplicationDetail);
             this.userStoreCreditService.save(userStoreCredit);
         }
         return creditApplicationDetail.getUser().getEmail();
