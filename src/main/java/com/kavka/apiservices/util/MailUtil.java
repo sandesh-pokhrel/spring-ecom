@@ -33,8 +33,10 @@ public class MailUtil {
 
     @Value("${mail.message.registration}")
     private String registrationBody;
-    @Value("${mail.message.verification}")
-    private String verificationBody;
+    @Value("${mail.message.credit.verification.approved}")
+    private String creditVerificationBodyApproved;
+    @Value("${mail.message.credit.verification.declined}")
+    private String creditVerificationBodyDeclined;
     @Value("${mail.message.invoice}")
     private String invoiceBody;
 
@@ -94,9 +96,10 @@ public class MailUtil {
 
         } else if (mailType == MailType.RESET_PASSWORD) {
             System.out.println("Reset password request");
-        } else if (mailType == MailType.USER_VERIFICATION) {
-            helper.setSubject("Verification Successful");
-            String bodyText = verificationBody;
+        } else if (mailType == MailType.USER_CREDIT_VERIFICATION) {
+            helper.setSubject("Store Credit Verification");
+            Boolean verificationStatus = (Boolean) extras.get("data");
+            String bodyText = verificationStatus ? creditVerificationBodyApproved : creditVerificationBodyDeclined;
             helper.setText(bodyText, true);
         } else if (mailType == MailType.INVOICE_MAIL) {
             helper.setSubject("Invoice");

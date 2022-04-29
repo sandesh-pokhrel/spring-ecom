@@ -43,7 +43,7 @@ public class CreditApplicationDetailService {
         return this.creditApplicationDetailRepository.save(creditApplicationDetail);
     }
 
-    public void verify(Integer id,
+    public String verify(Integer id,
                        CreditApplicationVerificationRequest verificationRequest,
                        User verifiedBy) {
         CreditApplicationDetail creditApplicationDetail = this.getById(id);
@@ -72,5 +72,6 @@ public class CreditApplicationDetailService {
                     .build();
             this.userStoreCreditService.save(userStoreCredit);
         }
+        return creditApplicationDetail.getUser().getEmail();
     }
 }
