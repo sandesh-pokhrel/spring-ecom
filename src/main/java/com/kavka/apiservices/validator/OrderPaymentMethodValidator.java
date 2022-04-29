@@ -4,6 +4,7 @@ import com.kavka.apiservices.model.PaymentType;
 import com.kavka.apiservices.model.User;
 import com.kavka.apiservices.model.UserStoreCredit;
 import com.kavka.apiservices.request.OrderRequest;
+import com.kavka.apiservices.service.OrderPaymentService;
 import com.kavka.apiservices.service.UserService;
 import com.kavka.apiservices.service.UserStoreCreditService;
 import com.kavka.apiservices.validator.constraint.ValidOrderPayment;
@@ -21,6 +22,7 @@ public class OrderPaymentMethodValidator
         implements ConstraintValidator<ValidOrderPayment, OrderRequest> {
 
     private final UserService userService;
+    private final OrderPaymentService orderPaymentService;
     private final UserStoreCreditService userStoreCreditService;
 
     @Override
@@ -30,8 +32,10 @@ public class OrderPaymentMethodValidator
             User user = this.userService.getByEmail(email);
             UserStoreCredit storeCredit = this.userStoreCreditService.getByUser(user);
             if (Objects.isNull(storeCredit)) return false;
-            return (storeCredit.getAvailableBalance() >= orderRequest.getTotalAmount())
-                    && Objects.nonNull(orderRequest.getPayment().getPaymentPlan()) ;
+            if (!((storeCredit.getAvailableBalance() >= orderRequest.getTotalAmount())
+                    && Objects.nonNull(orderRequest.getPayment().getPaymentPlan())))
+                return false;
+            return orderPaymentService.countByNotPaidCreditForUser(user) == 0;
         }
         return true;
     }

@@ -6,6 +6,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -32,5 +33,14 @@ public class OrderPayment {
     @NotNull(message = "Payment type cannot be null.")
     private PaymentType paymentType;
 
-    private String paymentPlan;
+    @Enumerated(EnumType.STRING)
+    private PaymentPlan paymentPlan;
+
+    @Temporal(TemporalType.DATE)
+    private Date creditDueDate;
+
+    @Temporal(TemporalType.DATE)
+    private Date creditPaidDate;
+
+
 }

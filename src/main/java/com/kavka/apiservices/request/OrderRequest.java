@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kavka.apiservices.model.Billing;
 import com.kavka.apiservices.model.OrderRequestMode;
+import com.kavka.apiservices.model.PaymentPlan;
 import com.kavka.apiservices.model.PaymentType;
 import com.kavka.apiservices.validator.constraint.ValidOrderPayment;
 import io.swagger.annotations.ApiModel;
@@ -78,6 +79,6 @@ public class OrderRequest {
         @NotNull(message = "Payment type must be present.")
         private PaymentType paymentType;
         @JsonProperty("payment_plan")
-        private String paymentPlan;
+        private PaymentPlan paymentPlan;
     }
 }
