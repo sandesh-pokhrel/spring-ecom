@@ -2,6 +2,7 @@ package com.kavka.apiservices.aspect;
 
 import com.kavka.apiservices.exception.InvalidOperationException;
 import com.kavka.apiservices.model.Billing;
+import com.kavka.apiservices.model.CreditApplicationDetail;
 import com.kavka.apiservices.model.User;
 import com.kavka.apiservices.service.UserService;
 import lombok.RequiredArgsConstructor;
@@ -28,11 +29,14 @@ public class ResourceAccessibleAspect {
     @Value("${user.save.illegal}")
     private String illegalSave;
 
+    @Value("${mail.admin}")
+    private String adminEmail;
+
 
 
     private void throwIfIllegalUser(Integer userId, Authentication authentication) {
         User user = userService.getById(userId);
-        if(!user.getEmail().equalsIgnoreCase(authentication.getName()))
+        if(!authentication.getName().equals(adminEmail) && !user.getEmail().equalsIgnoreCase(authentication.getName()))
             throw new InvalidOperationException(illegalSave);
     }
 
@@ -63,6 +67,10 @@ public class ResourceAccessibleAspect {
                 case "BillingController":
                     Billing billing = (Billing) args[0];
                     throwIfIllegalUser(billing.getUser().getId(), authentication);
+                    break;
+                case "CreditApplicationDetailController":
+                    CreditApplicationDetail creditApplicationDetail = (CreditApplicationDetail) args[0];
+                    throwIfIllegalUser(creditApplicationDetail.getUser().getId(), authentication);
                     break;
             }
         }
