@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.kavka.apiservices.model.Billing;
 import com.kavka.apiservices.model.OrderRequestMode;
+import com.kavka.apiservices.model.PaymentType;
 import io.swagger.annotations.ApiModel;
 import lombok.*;
 
@@ -40,6 +41,7 @@ public class OrderRequest {
     private Map<String, String> orderMetadata;
     @JsonProperty("order_items")
     private List<OrderRequest.OrderItem> orderItems;
+    private Payment payment;
 
     @Getter
     @Setter
@@ -56,5 +58,17 @@ public class OrderRequest {
         @JsonProperty("variation_list")
         private Map<String, String> variationList;
         private Map<String, String> metadata;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class Payment {
+        @JsonProperty("payment_type")
+        private PaymentType paymentType;
+        @JsonProperty("payment_plan")
+        private String paymentPlan;
     }
 }

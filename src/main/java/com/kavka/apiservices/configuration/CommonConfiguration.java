@@ -1,4 +1,4 @@
-package com.kavka.apiservices.config;
+package com.kavka.apiservices.configuration;
 
 import com.kavka.apiservices.common.Status;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -25,7 +25,7 @@ import java.io.IOException;
 
 
 @Configuration
-public class CommonConfig {
+public class CommonConfiguration {
 
     @Bean
     public Status getStatus() {

@@ -5,6 +5,7 @@ import com.kavka.apiservices.model.Billing;
 import com.kavka.apiservices.model.OrderRequestMode;
 import com.kavka.apiservices.model.User;
 import com.kavka.apiservices.model.mapper.OrderRequestItemToModelMapper;
+import com.kavka.apiservices.model.mapper.PaymentRequestToModelMapper;
 import com.kavka.apiservices.repository.OrderRepository;
 import com.kavka.apiservices.request.OrderRequest;
 import org.junit.jupiter.api.BeforeEach;
@@ -48,6 +49,9 @@ class OrderServiceTest {
     private OrderToDtoMapper orderToDtoMapper;
     @Mock
     private OrderRequestItemToModelMapper orderRequestItemToModelMapper;
+
+    @Mock
+    PaymentRequestToModelMapper paymentRequestToModelMapper;
 
     private ConstraintViolation<Billing> setupConstraintViolation() {
         return new ConstraintViolation<Billing>() {
@@ -112,7 +116,7 @@ class OrderServiceTest {
     void setup() {
         this.orderService = new OrderService(orderRepository, billingService, userService,
                 productDetailService, validator,
-                orderToDtoMapper, orderRequestItemToModelMapper);
+                orderToDtoMapper, orderRequestItemToModelMapper, paymentRequestToModelMapper);
 
         this.orderRequest = OrderRequest.builder()
                 .orderRequestMode(OrderRequestMode.DEFAULT)

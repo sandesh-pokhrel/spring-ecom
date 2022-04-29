@@ -1,7 +1,7 @@
 package com.kavka.apiservices.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.kavka.apiservices.config.TestSecurityConfig;
+import com.kavka.apiservices.configuration.TestSecurityConfiguration;
 import com.kavka.apiservices.model.User;
 import com.kavka.apiservices.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,16 +12,11 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
-import java.util.Objects;
-
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -30,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT,
-        classes = {TestSecurityConfig.class}) // skipping security for testRestTemplate
+        classes = {TestSecurityConfiguration.class}) // skipping security for testRestTemplate
 @ExtendWith(SpringExtension.class)
 @AutoConfigureMockMvc(addFilters = false) // skipping security for mockMvc
 class UserControllerTest {
@@ -85,20 +80,4 @@ class UserControllerTest {
                 .andExpect(jsonPath("firstName").exists());
     }
 
-    @Test
-    void verifyUser() throws Exception {
-        // given
-        user.setId(1001);
-        user.setIsVerified(true);
-
-        when(userService.getById(anyInt())).thenReturn(user);
-        doReturn(user).when(userService).verifyUser(any());
-
-        ResponseEntity<User> response = restTemplate.exchange("/users/verify/" + user.getId(), HttpMethod.PUT, null, User.class);
-        assertThat(Objects.requireNonNull(response.getBody()).getIsVerified()).isTrue();
-
-//        mockMvc
-//                .perform(put("/users/verify/1001"))
-//                .andExpect(jsonPath("id").exists());
-    }
 }

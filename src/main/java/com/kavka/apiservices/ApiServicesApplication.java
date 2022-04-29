@@ -1,6 +1,6 @@
 package com.kavka.apiservices;
 
-import com.kavka.apiservices.config.TestSecurityConfig;
+import com.kavka.apiservices.configuration.TestSecurityConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
@@ -14,7 +14,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 @PropertySource("classpath:messages.properties")
 @EnableAspectJAutoProxy
 @ComponentScan(basePackages = {"com.kavka.apiservices"},
-        excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = {TestSecurityConfig.class})})
+        excludeFilters = {@ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = {TestSecurityConfiguration.class})})
 public class ApiServicesApplication {
 
     public static void main(String[] args) {

@@ -61,18 +61,11 @@ public class UserService {
             throw new UserExistsException("Email address already exists!");
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setEnabled(true);
-        user.setIsVerified(false);
         if (Objects.isNull(user.getAuthorities())) {
             user.setAuthorities(Collections.singletonList(new Authority(null, "ROLE_USER", user)));
         }
         User savedUser = userRepository.save(user);
         mailUtil.sendMail(savedUser.getEmail(), MailType.USER_CREATION, null);
-        return savedUser;
-    }
-
-    public User verifyUser(User user) throws MessagingException, DocumentException {
-        User savedUser = userRepository.save(user);
-        mailUtil.sendMail(savedUser.getEmail(), MailType.USER_VERIFICATION, null);
         return savedUser;
     }
 }

@@ -1,4 +1,4 @@
-package com.kavka.apiservices.config;
+package com.kavka.apiservices.configuration;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +16,7 @@ import java.util.Collections;
  * To access the swagger ui use -  http://address/swagger-ui/index.html
  */
 @Configuration
-public class SwaggerConfig {
+public class SwaggerConfiguration {
 
     @Bean
     public Docket docket() {

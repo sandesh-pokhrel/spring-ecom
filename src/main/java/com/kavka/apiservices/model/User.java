@@ -38,12 +38,13 @@ public class User implements Serializable {
     private String email;
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+    @NotBlank(message = "First name is required.")
     private String firstName;
+    @NotBlank(message = "Last name is required.")
     private String lastName;
     @NotBlank(message = "{model.field.company.validation.blank}")
     private String company;
     private Boolean enabled;
-    private Boolean isVerified;
 
     @CreationTimestamp
     @Temporal(TemporalType.DATE)

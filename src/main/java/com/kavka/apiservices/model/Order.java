@@ -42,6 +42,14 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus status;
 
+    @CreationTimestamp
+    @Temporal(TemporalType.DATE)
+    private Date createdOn;
+
+    @UpdateTimestamp
+    @Temporal(TemporalType.DATE)
+    private Date updatedOn;
+
     @OneToOne
     @JoinColumn(name = "billing_id", referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "fk_order_billing_id"))
@@ -56,4 +64,8 @@ public class Order {
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<OrderItem> orderItems;
+
+    @OneToOne(mappedBy = "order", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private OrderPayment orderPayment;
 }

@@ -5,8 +5,10 @@ import com.kavka.apiservices.dto.mapper.OrderToDtoMapper;
 import com.kavka.apiservices.exception.InvalidOperationException;
 import com.kavka.apiservices.model.*;
 import com.kavka.apiservices.model.mapper.OrderRequestItemToModelMapper;
+import com.kavka.apiservices.model.mapper.PaymentRequestToModelMapper;
 import com.kavka.apiservices.repository.OrderRepository;
 import com.kavka.apiservices.request.OrderRequest;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class OrderService {
 
     private final OrderRepository orderRepository;
@@ -29,25 +32,10 @@ public class OrderService {
     private final Validator validator;
     private final OrderToDtoMapper orderToDtoMapper;
     private final OrderRequestItemToModelMapper orderRequestItemToModelMapper;
+    private final PaymentRequestToModelMapper paymentRequestToModelMapper;
 
     @Value("${mail.admin}")
     private String adminEmail;
-
-    public OrderService(OrderRepository orderRepository,
-                        BillingService billingService,
-                        UserService userService,
-                        ProductDetailService productDetailService,
-                        Validator validator,
-                        OrderToDtoMapper orderToDtoMapper,
-                        OrderRequestItemToModelMapper orderRequestItemToModelMapper) {
-        this.orderRepository = orderRepository;
-        this.billingService = billingService;
-        this.userService = userService;
-        this.productDetailService = productDetailService;
-        this.validator = validator;
-        this.orderToDtoMapper = orderToDtoMapper;
-        this.orderRequestItemToModelMapper = orderRequestItemToModelMapper;
-    }
 
     protected void validateCustomer(@Valid Billing billing) {
         Set<ConstraintViolation<Billing>> violations = validator.validate(billing);
@@ -98,6 +86,7 @@ public class OrderService {
         Billing billing = getBilling(orderRequest, name);
         User user = this.userService.getByEmail(name);
         List<OrderItem> orderItems = buildOrderItemFromRequest(orderRequest.getOrderItems());
+        OrderPayment orderPayment = paymentRequestToModelMapper.from(orderRequest.getPayment());
         Order order = Order.builder()
                 .id(null)
                 .billing(billing)
@@ -106,9 +95,11 @@ public class OrderService {
                 .taxTotal(orderRequest.getTaxTotal())
                 .shippingMethod(orderRequest.getShippingMethod())
                 .user(user)
-                .status(OrderStatus.PENDING)
+                .status(OrderStatus.CONFIRMED)
                 .build();
         orderItems.forEach(orderItem -> orderItem.setOrder(order));
+        orderPayment.setOrder(order);
+        order.setOrderPayment(orderPayment);
         order.setOrderItems(orderItems);
         return this.orderRepository.save(order);
     }

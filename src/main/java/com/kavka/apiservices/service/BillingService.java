@@ -6,9 +6,7 @@ import com.kavka.apiservices.model.Billing;
 import com.kavka.apiservices.model.User;
 import com.kavka.apiservices.repository.BillingRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

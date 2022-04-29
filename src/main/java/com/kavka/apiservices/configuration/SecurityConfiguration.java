@@ -1,4 +1,4 @@
-package com.kavka.apiservices.config;
+package com.kavka.apiservices.configuration;
 
 import com.kavka.apiservices.filter.JwtAuthenticationFilter;
 import com.kavka.apiservices.filter.RestAuthenticationEntryPoint;
@@ -29,7 +29,7 @@ import java.util.Collections;
 @EnableWebSecurity
 @AllArgsConstructor
 @EnableGlobalMethodSecurity(prePostEnabled = true)
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final CustomUserDetailsService customUserDetailsService;
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
@@ -50,7 +50,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         "/users/authenticate")
                 .permitAll()
                 .antMatchers(HttpMethod.POST, "/users").permitAll()
-                .antMatchers(HttpMethod.PUT, "/users/verify/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST, "/credit-applications/verify/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
