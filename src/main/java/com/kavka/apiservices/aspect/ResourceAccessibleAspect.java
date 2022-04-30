@@ -42,7 +42,6 @@ public class ResourceAccessibleAspect {
 
     @Before("execution(* com.kavka.apiservices.controller.*.getAllByUser(..))")
     public void ifResourceForUserInController(JoinPoint joinpoint) {
-        log.warn("Before aspect to check if resource is for given user...");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object[] args = joinpoint.getArgs();
         if (args.length > 0) {
@@ -56,7 +55,6 @@ public class ResourceAccessibleAspect {
 
     @Before("execution(* com.kavka.apiservices.controller.*.save(..))")
     public void ifSaveForIsUserInController(JoinPoint joinpoint) {
-        log.warn("Before aspect to check if saving is for oneself...");
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object[] args = joinpoint.getArgs();
         String declaringTypeName =
