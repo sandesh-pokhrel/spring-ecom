@@ -20,4 +20,12 @@ public class UserStoreCreditService {
     public UserStoreCredit save(UserStoreCredit userStoreCredit) {
         return this.userStoreCreditRepository.save(userStoreCredit);
     }
+
+    public void updateBalances(double changeFactor, User user) {
+        UserStoreCredit userStoreCredit = this.userStoreCreditRepository.findByUser(user)
+                .orElseThrow(() -> new NotFoundException("Credit info not found!"));
+        userStoreCredit.setCurrentBalance(userStoreCredit.getCurrentBalance() + changeFactor);
+        userStoreCredit.setAvailableBalance(userStoreCredit.getAvailableBalance() - changeFactor);
+        this.save(userStoreCredit);
+    }
 }

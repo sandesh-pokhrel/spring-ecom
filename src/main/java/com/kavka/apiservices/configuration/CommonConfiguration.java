@@ -88,8 +88,7 @@ public class CommonConfiguration {
                 ClientHttpRequestExecution execution) throws IOException {
             HttpHeaders httpHeaders = new HttpHeaders();
             httpHeaders.set("ORDERDESK-STORE-ID", "3121");
-            // Add 'S' at the end of api key
-            httpHeaders.set("ORDERDESK-API-KEY", "hxMQyoG4te41XFij8sIzuI2CxSQPECkUgtrM9GsUlM4Ug53lf");
+            httpHeaders.set("ORDERDESK-API-KEY", "hxMQyoG4te41XFij8sIzuI2CxSQPECkUgtrM9GsUlM4Ug53lfS");
             request.getHeaders().addAll(httpHeaders);
             return execution.execute(request, body);
         }

@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.text.MessageFormat;
 import java.util.List;
 import java.util.Objects;
 
@@ -19,12 +20,21 @@ public class BillingService {
     private final BillingRepository billingRepository;
     private final UserService userService;
 
+    @Value("${generic.not.found}")
+    private String notFound;
+
+    @Value("${admin.not.configured}")
+    private String adminNotConfigured;
+
     @Value("${mail.admin}")
     private String adminEmail;
 
+    @Value("${admin.count.invalid}")
+    private String adminCountInvalid;
+
     public Billing getById(Integer id) {
         return this.billingRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Billing not found!"));
+                .orElseThrow(() -> new NotFoundException(MessageFormat.format(notFound, "Billing")));
     }
 
     public List<Billing> getAllByUser(Integer userId) {
@@ -34,15 +44,16 @@ public class BillingService {
 
     public Billing getByIdAndEmail(Integer id, String email) {
         User user = this.userService.getByEmail(email);
-        if (Objects.isNull(id)) throw new InvalidOperationException("Customer info not found!");
+        if (Objects.isNull(id))
+            throw new InvalidOperationException(MessageFormat.format(notFound, "Customer Info"));
         return this.billingRepository.findByIdAndUser(id, user)
-                .orElseThrow(() -> new InvalidOperationException("Customer info not found!"));
+                .orElseThrow(() -> new InvalidOperationException(MessageFormat.format(notFound, "Customer Info")));
     }
 
     public Billing getByEmailAndIsDefault(String email, Boolean isDefault) {
         User user = this.userService.getByEmail(email);
         return this.billingRepository.findByUserAndIsDefault(user, isDefault)
-                .orElseThrow(() -> new InvalidOperationException("Customer info not found!"));
+                .orElseThrow(() -> new InvalidOperationException(MessageFormat.format(notFound, "Customer Info")));
     }
 
     public List<Billing> getAllByEmailAndIsDefault(String email, Boolean isDefault) {
@@ -50,9 +61,9 @@ public class BillingService {
         List<Billing> billings = this.billingRepository.findAllByUserAndIsDefault(user, isDefault);
         if (email.equals(adminEmail))
             if (billings.isEmpty())
-                throw new RuntimeException("Kavka admin customer is not configured!");
+                throw new RuntimeException(adminNotConfigured);
             else if (billings.size() > 1)
-                throw new RuntimeException("Kavka admin customer count should not exceed one!");
+                throw new RuntimeException(adminCountInvalid);
         return billings;
     }
 

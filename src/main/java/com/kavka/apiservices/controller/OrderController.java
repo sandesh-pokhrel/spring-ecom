@@ -1,9 +1,10 @@
 package com.kavka.apiservices.controller;
 
 import com.kavka.apiservices.common.MailType;
-import com.kavka.apiservices.dto.OrderDto;
 import com.kavka.apiservices.exception.InvalidOperationException;
-import com.kavka.apiservices.model.*;
+import com.kavka.apiservices.model.Invoice;
+import com.kavka.apiservices.model.Order;
+import com.kavka.apiservices.model.OrderRequestMode;
 import com.kavka.apiservices.request.OrderRequest;
 import com.kavka.apiservices.response.OrderResponse;
 import com.kavka.apiservices.service.InvoiceService;
@@ -15,10 +16,7 @@ import com.lowagie.text.DocumentException;
 import io.swagger.annotations.Api;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
@@ -53,6 +51,9 @@ public class OrderController {
     @Value("${resource.unaccessible}")
     private String illegalResourceMessage;
 
+    @Value("${order.request.mode.unsupported}")
+    private String orderRequestModeUnsupported;
+
     @GetMapping
 
     public List<Order> getAll() {
@@ -76,11 +77,11 @@ public class OrderController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public OrderResponse saveOrder(@Valid @RequestBody OrderRequest orderRequest,
-                           Authentication authentication) throws MessagingException, DocumentException {
+                                   Authentication authentication) throws MessagingException, DocumentException {
         // TODO: custom request is disabled for now, enable later
         if (orderRequest.getOrderRequestMode() == OrderRequestMode.GUEST ||
                 orderRequest.getOrderRequestMode() == OrderRequestMode.CUSTOM)
-            throw new InvalidOperationException("Order request mode not supported");
+            throw new InvalidOperationException(orderRequestModeUnsupported);
         Map<String, Object> orderMap = this.orderService.saveOrder(orderRequest, authentication);
         String name = authentication.getName();
         Consumer<Order> fnInvoice = order1 -> {
@@ -98,14 +99,4 @@ public class OrderController {
         }});
         return ((OrderResponse) orderMap.get("orderResponse"));
     }
-
-//    @GetMapping("/send-to-orderdesk/{orderId}")
-//    @ResponseStatus(HttpStatus.OK)
-//    public OrderResponse sendOrderToOrderDesk(@PathVariable Integer orderId) {
-//        Order order = this.orderService.getById(orderId);
-//        OrderDto orderDto = this.orderService.buildRequest(order);
-//        ResponseEntity<OrderResponse> response =
-//                this.restTemplate.exchange(orderdeskUrl, HttpMethod.POST, new HttpEntity<>(orderDto), OrderResponse.class);
-//        return response.getBody();
-//    }
 }

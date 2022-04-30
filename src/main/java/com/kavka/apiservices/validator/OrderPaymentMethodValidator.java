@@ -10,13 +10,11 @@ import com.kavka.apiservices.service.UserStoreCreditService;
 import com.kavka.apiservices.validator.constraint.ValidOrderPayment;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 import java.util.Objects;
 
-@Component
 @RequiredArgsConstructor
 public class OrderPaymentMethodValidator
         implements ConstraintValidator<ValidOrderPayment, OrderRequest> {

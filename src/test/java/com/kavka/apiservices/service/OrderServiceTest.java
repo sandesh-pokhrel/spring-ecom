@@ -14,7 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.client.RestTemplate;
 
@@ -46,6 +45,8 @@ class OrderServiceTest {
     private UserService userService;
     @Mock
     private ProductDetailService productDetailService;
+    @Mock
+    private UserStoreCreditService userStoreCreditService;
     @Mock
     private Validator validator;
     @Mock
@@ -124,7 +125,7 @@ class OrderServiceTest {
     @BeforeEach
     void setup() {
         this.orderService = new OrderService(orderRepository, billingService, userService,
-                productDetailService, validator, orderToDtoMapper,
+                productDetailService, userStoreCreditService, validator, orderToDtoMapper,
                 orderRequestItemToModelMapper, paymentRequestToModelMapper,
                 orderRequestToModelMapper, restTemplate);
 

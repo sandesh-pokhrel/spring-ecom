@@ -10,7 +10,8 @@ import com.lowagie.text.DocumentException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,7 +28,7 @@ import java.util.Map;
 
 @Validated
 @RestController
-@AllArgsConstructor
+@RequiredArgsConstructor
 @RequestMapping("/users")
 @Api(tags = "User Controller",
         description = "Set of endpoints for authentication, password change, reset etc. User JWT for this feature.")
@@ -38,6 +39,9 @@ public class UserController {
     private final CustomUserDetailsService customUserDetailsService;
     private final AuthenticationManager authenticationManager;
 
+    @Value("${invalid.user.credential}")
+    private String invalidUserCredential;
+
     @PostMapping(value = "/authenticate")
     @ApiOperation(value = "Uses JWT for authentication.")
     public ResponseEntity<Map<String, Object>> authenticate(
@@ -47,7 +51,7 @@ public class UserController {
             authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),
                     loginRequest.getPassword()));
         } catch (BadCredentialsException ex) {
-            throw new InvalidUserCredentialException("Invalid user credentials provided!");
+            throw new InvalidUserCredentialException(invalidUserCredential);
         }
         UserDetails userDetails = customUserDetailsService.loadUserByUsername(loginRequest.getEmail());
         String jwtToken = jwtUtil.generateToken(userDetails);
