@@ -27,6 +27,7 @@ import javax.mail.MessagingException;
 import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 @RestController
@@ -74,19 +75,20 @@ public class OrderController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public Order saveOrder(@Valid @RequestBody OrderRequest orderRequest,
+    public OrderResponse saveOrder(@Valid @RequestBody OrderRequest orderRequest,
                            Authentication authentication) throws MessagingException, DocumentException {
         // TODO: custom request is disabled for now, enable later
         if (orderRequest.getOrderRequestMode() == OrderRequestMode.GUEST ||
                 orderRequest.getOrderRequestMode() == OrderRequestMode.CUSTOM)
             throw new InvalidOperationException("Order request mode not supported");
-        Order order = this.orderService.saveOrder(orderRequest, authentication);
+        Map<String, Object> orderMap = this.orderService.saveOrder(orderRequest, authentication);
         String name = authentication.getName();
         Consumer<Order> fnInvoice = order1 -> {
             Invoice invoice = Invoice.builder().order(order1).build();
             invoiceService.save(invoice);
         };
         // Order confirmation mail
+        Order order = (Order) orderMap.get("order");
         mailUtil.sendMail(name, MailType.INVOICE_MAIL, new HashMap<String, Object>() {{
             put("data", order);
             put("callback", fnInvoice);
@@ -94,16 +96,16 @@ public class OrderController {
         mailUtil.sendMail(adminEmail, MailType.INVOICE_MAIL, new HashMap<String, Object>() {{
             put("data", order);
         }});
-        return order;
+        return ((OrderResponse) orderMap.get("orderResponse"));
     }
 
-    @GetMapping("/send-to-orderdesk/{orderId}")
-    @ResponseStatus(HttpStatus.OK)
-    public OrderResponse sendOrderToOrderDesk(@PathVariable Integer orderId) {
-        Order order = this.orderService.getById(orderId);
-        OrderDto orderDto = this.orderService.buildRequest(order);
-        ResponseEntity<OrderResponse> response =
-                this.restTemplate.exchange(orderdeskUrl, HttpMethod.POST, new HttpEntity<>(orderDto), OrderResponse.class);
-        return response.getBody();
-    }
+//    @GetMapping("/send-to-orderdesk/{orderId}")
+//    @ResponseStatus(HttpStatus.OK)
+//    public OrderResponse sendOrderToOrderDesk(@PathVariable Integer orderId) {
+//        Order order = this.orderService.getById(orderId);
+//        OrderDto orderDto = this.orderService.buildRequest(order);
+//        ResponseEntity<OrderResponse> response =
+//                this.restTemplate.exchange(orderdeskUrl, HttpMethod.POST, new HttpEntity<>(orderDto), OrderResponse.class);
+//        return response.getBody();
+//    }
 }

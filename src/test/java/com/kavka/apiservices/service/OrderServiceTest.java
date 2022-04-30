@@ -14,7 +14,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.security.core.Authentication;
+import org.springframework.web.client.RestTemplate;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -56,6 +58,9 @@ class OrderServiceTest {
 
     @Mock
     OrderRequestToModelMapper orderRequestToModelMapper;
+
+    @Mock
+    RestTemplate restTemplate;
 
     private ConstraintViolation<Billing> setupConstraintViolation() {
         return new ConstraintViolation<Billing>() {
@@ -121,7 +126,7 @@ class OrderServiceTest {
         this.orderService = new OrderService(orderRepository, billingService, userService,
                 productDetailService, validator, orderToDtoMapper,
                 orderRequestItemToModelMapper, paymentRequestToModelMapper,
-                orderRequestToModelMapper);
+                orderRequestToModelMapper, restTemplate);
 
         this.orderRequest = OrderRequest.builder()
                 .orderRequestMode(OrderRequestMode.DEFAULT)

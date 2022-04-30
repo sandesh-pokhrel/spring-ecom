@@ -9,16 +9,24 @@ import com.kavka.apiservices.model.mapper.OrderRequestToModelMapper;
 import com.kavka.apiservices.model.mapper.PaymentRequestToModelMapper;
 import com.kavka.apiservices.repository.OrderRepository;
 import com.kavka.apiservices.request.OrderRequest;
+import com.kavka.apiservices.response.OrderResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.client.RestTemplate;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 import javax.validation.Valid;
 import javax.validation.Validator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -35,9 +43,14 @@ public class OrderService {
     private final OrderRequestItemToModelMapper orderRequestItemToModelMapper;
     private final PaymentRequestToModelMapper paymentRequestToModelMapper;
     private final OrderRequestToModelMapper orderRequestToModelMapper;
+    private final RestTemplate restTemplate;
 
     @Value("${mail.admin}")
     private String adminEmail;
+
+    @Value("${orderdesk.api-url}")
+    private String orderdeskUrl;
+
 
     protected void validateCustomer(@Valid Billing billing) {
         Set<ConstraintViolation<Billing>> violations = validator.validate(billing);
@@ -70,6 +83,14 @@ public class OrderService {
         return billing;
     }
 
+    private OrderResponse sendOrderToOrderDesk(@PathVariable Integer orderId) {
+        Order order = this.getById(orderId);
+        OrderDto orderDto = this.buildRequest(order);
+        ResponseEntity<OrderResponse> response =
+                this.restTemplate.exchange(orderdeskUrl, HttpMethod.POST, new HttpEntity<>(orderDto), OrderResponse.class);
+        return response.getBody();
+    }
+
     public List<Order> getAll() {
         return this.orderRepository.findAll();
     }
@@ -83,7 +104,7 @@ public class OrderService {
         return this.orderRepository.findAllByUser(user);
     }
 
-    public Order saveOrder(OrderRequest orderRequest, Authentication authentication) {
+    public Map<String, Object> saveOrder(OrderRequest orderRequest, Authentication authentication) {
         String name = authentication.getName();
         Billing billing = getBilling(orderRequest, name);
         User user = this.userService.getByEmail(name);
@@ -95,7 +116,12 @@ public class OrderService {
         order.setOrderPayment(orderPayment);
         order.setOrderItems(orderItems);
         order.setUser(user);
-        return this.orderRepository.save(order);
+        Order savedOrder = this.orderRepository.save(order);
+        OrderResponse orderResponse = sendOrderToOrderDesk(savedOrder.getId());
+        return new HashMap<String, Object>(){{
+            put("order", savedOrder);
+            put("orderResponse", orderResponse);
+        }};
     }
 
     public OrderDto buildRequest(Order order) {
