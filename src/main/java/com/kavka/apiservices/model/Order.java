@@ -41,10 +41,15 @@ public class Order {
     @Temporal(TemporalType.DATE)
     private Date updatedOn;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "billing_id", referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "fk_order_billing_id"))
-    private Billing billing;
+    private Address billing;
+
+    @ManyToOne
+    @JoinColumn(name = "shipping_id", referencedColumnName = "id",
+            foreignKey = @ForeignKey(name = "fk_order_shipping_id"))
+    private Address shipping;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", referencedColumnName = "id",

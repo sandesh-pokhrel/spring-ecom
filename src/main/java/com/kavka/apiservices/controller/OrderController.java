@@ -4,7 +4,6 @@ import com.kavka.apiservices.common.MailType;
 import com.kavka.apiservices.exception.InvalidOperationException;
 import com.kavka.apiservices.model.Invoice;
 import com.kavka.apiservices.model.Order;
-import com.kavka.apiservices.model.OrderRequestMode;
 import com.kavka.apiservices.request.OrderRequest;
 import com.kavka.apiservices.response.OrderResponse;
 import com.kavka.apiservices.service.InvoiceService;
@@ -51,9 +50,6 @@ public class OrderController {
     @Value("${resource.unaccessible}")
     private String illegalResourceMessage;
 
-    @Value("${order.request.mode.unsupported}")
-    private String orderRequestModeUnsupported;
-
     @GetMapping
 
     public List<Order> getAll() {
@@ -78,10 +74,6 @@ public class OrderController {
     @ResponseStatus(HttpStatus.CREATED)
     public OrderResponse saveOrder(@Valid @RequestBody OrderRequest orderRequest,
                                    Authentication authentication) throws MessagingException, DocumentException {
-        // TODO: custom request is disabled for now, enable later
-        if (orderRequest.getOrderRequestMode() == OrderRequestMode.GUEST ||
-                orderRequest.getOrderRequestMode() == OrderRequestMode.CUSTOM)
-            throw new InvalidOperationException(orderRequestModeUnsupported);
         Map<String, Object> orderMap = this.orderService.saveOrder(orderRequest, authentication);
         String name = authentication.getName();
         Consumer<Order> fnInvoice = order1 -> {

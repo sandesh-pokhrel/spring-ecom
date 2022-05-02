@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 public class OrderService {
 
     private final OrderRepository orderRepository;
-    private final BillingService billingService;
+    private final AddressService addressService;
     private final UserService userService;
     private final ProductDetailService productDetailService;
     private final UserStoreCreditService userStoreCreditService;
@@ -53,35 +53,14 @@ public class OrderService {
     private String orderdeskUrl;
 
 
-    protected void validateCustomer(@Valid Billing billing) {
-        Set<ConstraintViolation<Billing>> violations = validator.validate(billing);
+    protected void validateCustomer(@Valid Address address) {
+        Set<ConstraintViolation<Address>> violations = validator.validate(address);
         if (!violations.isEmpty()) throw new ConstraintViolationException(violations);
     }
 
     protected List<OrderItem> buildOrderItemFromRequest(List<OrderRequest.OrderItem> orderItems) {
         return orderItems.stream().map(orderItem -> this.orderRequestItemToModelMapper
                 .from(orderItem, productDetailService)).collect(Collectors.toList());
-    }
-
-    protected Billing getBilling(OrderRequest orderRequest, String name) {
-        Billing billing;
-
-        switch (orderRequest.getOrderRequestMode()) {
-            case SPECIFIED:
-                billing = this.billingService.getByIdAndEmail(orderRequest.getBillingId(), name);
-                break;
-            case DEFAULT:
-                billing = this.billingService.getByEmailAndIsDefault(name, true);
-                break;
-            case CUSTOM:
-            case GUEST:
-                validateCustomer(orderRequest.getBilling());
-                billing = orderRequest.getBilling();
-                break;
-            default:
-                throw new InvalidOperationException("Order request mode is invalid!");
-        }
-        return billing;
     }
 
     private OrderResponse sendOrderToOrderDesk(@PathVariable Integer orderId) {
@@ -107,11 +86,15 @@ public class OrderService {
 
     public Map<String, Object> saveOrder(OrderRequest orderRequest, Authentication authentication) {
         String name = authentication.getName();
-        Billing billing = getBilling(orderRequest, name);
+        Address billing = this.addressService.getByIdAndEmail(orderRequest.getBillingId(), name);
+        Address shipping = this.addressService.getByIdAndEmail(orderRequest.getShippingId(), name);
         User user = this.userService.getByEmail(name);
         List<OrderItem> orderItems = buildOrderItemFromRequest(orderRequest.getOrderItems());
         OrderPayment orderPayment = paymentRequestToModelMapper.from(orderRequest.getPayment());
-        Order order = orderRequestToModelMapper.from(orderRequest, billing, orderPayment, OrderStatus.CONFIRMED);
+        Order order = orderRequestToModelMapper.from(orderRequest, billing, shipping, orderPayment,
+                OrderStatus.CONFIRMED);
+
+        // establishing foreign key relations
         orderItems.forEach(orderItem -> orderItem.setOrder(order));
         orderPayment.setOrder(order);
         order.setOrderPayment(orderPayment);
@@ -122,15 +105,15 @@ public class OrderService {
             this.userStoreCreditService.updateBalances(savedOrder.getTotalAmount(), user);
         //OrderResponse orderResponse = sendOrderToOrderDesk(savedOrder.getId());  uncomment this in production
         OrderResponse orderResponse = null; // remove this in production
-        return new HashMap<String, Object>(){{
+        return new HashMap<String, Object>() {{
             put("order", savedOrder);
             put("orderResponse", orderResponse);
         }};
     }
 
     public OrderDto buildRequest(Order order) {
-        Billing kavkaCustomer = this.billingService.getAllByEmailAndIsDefault(adminEmail, true).get(0);
-        Billing kavkaReturn = this.billingService.getAllByEmailAndIsDefault(adminEmail, false).get(0);
+        Address kavkaCustomer = this.addressService.getAllByEmailAndIsDefault(adminEmail, true).get(0);
+        Address kavkaReturn = this.addressService.getAllByEmailAndIsDefault(adminEmail, false).get(0);
 
         return this.orderToDtoMapper.from(order, kavkaCustomer, kavkaReturn);
     }

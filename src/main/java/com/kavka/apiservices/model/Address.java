@@ -17,10 +17,10 @@ import java.util.Objects;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "billing")
+@Table(name = "address")
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ApiModel(description = "Customer related info.")
-public class Billing {
+public class Address {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -46,8 +46,6 @@ public class Billing {
     private String country;
     private String phone;
     private Boolean isDefault;
-    @Enumerated(EnumType.STRING)
-    private AddressType type;
 
     @ManyToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id",
@@ -65,8 +63,8 @@ public class Billing {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Billing billing = (Billing) o;
-        return id.equals(billing.id);
+        Address address = (Address) o;
+        return id.equals(address.id);
     }
 
     @Override

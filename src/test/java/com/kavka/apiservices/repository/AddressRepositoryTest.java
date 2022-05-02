@@ -1,6 +1,6 @@
 package com.kavka.apiservices.repository;
 
-import com.kavka.apiservices.model.Billing;
+import com.kavka.apiservices.model.Address;
 import com.kavka.apiservices.model.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,17 +16,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-class BillingRepositoryTest {
+class AddressRepositoryTest {
 
     @Autowired
-    private BillingRepository billingRepository;
+    private AddressRepository addressRepository;
 
     @Test
     void findAllByUserAndIsDefault() {
         User user = User.builder()
                 .id(3)
                 .build();
-        List<Billing> billings = this.billingRepository.findAllByUserAndIsDefault(user, true);
+        List<Address> billings = this.addressRepository.findAllByUserAndIsDefault(user, true);
         assertEquals(1, billings.size());
     }
 }

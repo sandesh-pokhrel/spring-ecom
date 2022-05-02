@@ -2,7 +2,6 @@ package com.kavka.apiservices.request;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.kavka.apiservices.model.Billing;
 import com.kavka.apiservices.model.OrderRequestMode;
 import com.kavka.apiservices.model.PaymentPlan;
 import com.kavka.apiservices.model.PaymentType;
@@ -29,7 +28,8 @@ public class OrderRequest {
     private OrderRequestMode orderRequestMode;
     @JsonProperty("billing_id")
     private Integer billingId;
-    private Billing billing;
+    @JsonProperty("shipping_id")
+    private Integer shippingId;
     @JsonProperty("source_id")
     private String sourceId;
     @JsonProperty("total_amount")

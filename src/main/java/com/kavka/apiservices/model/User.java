@@ -25,7 +25,7 @@ import java.util.Objects;
 @Table(name = "users", uniqueConstraints = {
         @UniqueConstraint(columnNames = "email", name = "unq_user_email")
 })
-@JsonIgnoreProperties(value = {"customers", "orders", "billings"})
+@JsonIgnoreProperties(value = {"customers", "orders", "addresses"})
 @ApiModel(description = "This is the user table related to authentication.")
 public class User implements Serializable {
 
@@ -57,7 +57,7 @@ public class User implements Serializable {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     @ToString.Exclude
-    private List<Billing> billings;
+    private List<Address> addresses;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference

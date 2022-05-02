@@ -1,7 +1,7 @@
 package com.kavka.apiservices.aspect;
 
 import com.kavka.apiservices.exception.InvalidOperationException;
-import com.kavka.apiservices.model.Billing;
+import com.kavka.apiservices.model.Address;
 import com.kavka.apiservices.model.CreditApplicationDetail;
 import com.kavka.apiservices.model.User;
 import com.kavka.apiservices.service.UserService;
@@ -62,9 +62,9 @@ public class ResourceAccessibleAspect {
                         .substring(joinpoint.getSignature().getDeclaringTypeName().lastIndexOf(".") + 1);
         if (args.length > 0) {
             switch (declaringTypeName) {
-                case "BillingController":
-                    Billing billing = (Billing) args[0];
-                    throwIfIllegalUser(billing.getUser().getId(), authentication);
+                case "AddressController":
+                    Address address = (Address) args[0];
+                    throwIfIllegalUser(address.getUser().getId(), authentication);
                     break;
                 case "CreditApplicationDetailController":
                     CreditApplicationDetail creditApplicationDetail = (CreditApplicationDetail) args[0];

@@ -1,7 +1,7 @@
 package com.kavka.apiservices.dto.mapper;
 
 import com.kavka.apiservices.dto.OrderDto;
-import com.kavka.apiservices.model.Billing;
+import com.kavka.apiservices.model.Address;
 import com.kavka.apiservices.model.Order;
 import com.kavka.apiservices.model.OrderItem;
 import org.mapstruct.Mapper;
@@ -19,7 +19,7 @@ public interface OrderToDtoMapper {
     @Mapping(target = "email", expression = "java(order.getUser().getEmail())")
     @Mapping(target = "shipping", source = "order.billing")
     @Mapping(target = "orderItems", source = "order.orderItems")
-    OrderDto from(Order order, Billing customer, Billing returnAddress);
+    OrderDto from(Order order, Address customer, Address returnAddress);
 
     @Mapping(target = "weight", ignore = true)
     @Mapping(target = "price", expression = "java(orderItem.getProductDetail().getPrice())")
