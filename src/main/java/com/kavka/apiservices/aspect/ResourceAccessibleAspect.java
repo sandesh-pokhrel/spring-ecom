@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,7 +33,14 @@ public class ResourceAccessibleAspect {
     @Value("${mail.admin}")
     private String adminEmail;
 
+    @Pointcut("execution(* com.kavka.apiservices.controller.*.getAllByUser(..))")
+    private void controllerGetAllByUser() {}
 
+    @Pointcut("execution(* com.kavka.apiservices.controller.*.getByUser(..))")
+    private void controllerGetByUser() {}
+
+    @Pointcut("execution(* com.kavka.apiservices.controller.*.deleteByUser(..))")
+    private void controllerDeleteByUser() {}
 
     private void throwIfIllegalUser(Integer userId, Authentication authentication) {
         User user = userService.getById(userId);
@@ -40,7 +48,7 @@ public class ResourceAccessibleAspect {
             throw new InvalidOperationException(illegalSave);
     }
 
-    @Before("execution(* com.kavka.apiservices.controller.*.getAllByUser(..))")
+    @Before("controllerGetAllByUser() || controllerGetByUser() || controllerDeleteByUser()")
     public void ifResourceForUserInController(JoinPoint joinpoint) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Object[] args = joinpoint.getArgs();

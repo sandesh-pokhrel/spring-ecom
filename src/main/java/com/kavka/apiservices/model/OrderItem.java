@@ -23,6 +23,7 @@ public class OrderItem {
     private Integer id;
 
     private Integer quantity;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "fk_order_item_order_id"))
