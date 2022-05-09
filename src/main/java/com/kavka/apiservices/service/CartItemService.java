@@ -48,4 +48,8 @@ public class CartItemService {
         cItem.setQuantity(cItem.getQuantity() + cartItem.getQuantity());
         return this.cartItemRepository.save(cItem);
     }
+
+    public void deleteById(Integer id) {
+        this.cartItemRepository.deleteById(id);
+    }
 }

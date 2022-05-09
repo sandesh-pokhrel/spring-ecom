@@ -43,4 +43,9 @@ public class CartItemController {
     public CartItem incrementQuantity(@RequestBody CartItem cartItem) {
         return this.cartItemService.changeQuantity(cartItem);
     }
+
+    @DeleteMapping("/{id}")
+    public void deleteById(@PathVariable Integer id) {
+        this.cartItemService.deleteById(id);
+    }
 }
