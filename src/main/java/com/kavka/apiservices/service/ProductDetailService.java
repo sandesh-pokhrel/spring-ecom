@@ -5,7 +5,6 @@ import com.kavka.apiservices.model.Product;
 import com.kavka.apiservices.model.ProductDetail;
 import com.kavka.apiservices.repository.ProductDetailRepository;
 import lombok.AllArgsConstructor;
-import org.omg.CORBA.DynAnyPackage.Invalid;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -5,6 +5,7 @@ import com.kavka.apiservices.model.CartItem;
 import com.kavka.apiservices.model.User;
 import com.kavka.apiservices.service.CartItemService;
 import com.kavka.apiservices.service.CartService;
+import com.kavka.apiservices.service.ProductDetailService;
 import com.kavka.apiservices.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,12 +22,15 @@ public class CartItemController {
     private final CartItemService cartItemService;
     private final CartService cartService;
     private final UserService userService;
+    private final ProductDetailService productDetailService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public CartItem addToCart(@RequestBody CartItem cartItem, Authentication authentication) {
         User user = this.userService.getByEmail(authentication.getName());
         Cart cart = this.cartService.getByUser(user.getId());
+        // check if product detail id is valid
+        this.productDetailService.getById(cartItem.getProductDetail().getId());
         if (Objects.isNull(cart)) {
             cart = this.cartService.save(Cart.builder().user(user).build());
         }
