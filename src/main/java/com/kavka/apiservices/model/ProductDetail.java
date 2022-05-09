@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModel;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.Objects;
 
 @Getter
 @Setter
@@ -34,4 +35,17 @@ public class ProductDetail {
     @JoinColumn(name = "product_id", referencedColumnName = "id",
             foreignKey = @ForeignKey(name = "fk_product_product_id"))
     private Product product;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ProductDetail that = (ProductDetail) o;
+        return id.equals(that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
