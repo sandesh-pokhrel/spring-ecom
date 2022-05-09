@@ -40,10 +40,10 @@ public class CartItemService {
         if (!productExists)
             return this.cartItemRepository.save(cartItem);
         else
-            return this.incrementQuantity(cartItem);
+            return this.changeQuantity(cartItem);
     }
 
-    public CartItem incrementQuantity(CartItem cartItem) {
+    public CartItem changeQuantity(CartItem cartItem) {
         CartItem cItem = this.getById(cartItem.getId());
         cItem.setQuantity(cItem.getQuantity() + cartItem.getQuantity());
         return this.cartItemRepository.save(cItem);
