@@ -26,6 +26,9 @@ public class ProductDetail {
     private String colors;
     private Double price;
     private String imageUrl;
+    private Double tierOnePrice;
+    private Double tierTwoPrice;
+    private Double tierThreePrice;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id", referencedColumnName = "id",

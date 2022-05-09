@@ -30,7 +30,7 @@ public class ProductController {
         return this.productService.getById(id);
     }
 
-    @GetMapping("/product-category/{product-category-id}")
+    @GetMapping("/product-categories/{product-category-id}")
     @ResponseStatus(HttpStatus.OK)
     public List<Product> getAllByProductCategory(@PathVariable("product-category-id") Integer productCategoryId) {
         return this.productService.getAllByProductCategory(productCategoryId);
