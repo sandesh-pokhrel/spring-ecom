@@ -38,7 +38,7 @@ public class CartItemController {
         return this.cartItemService.save(cartItem);
     }
 
-    @PostMapping("/increment")
+    @PostMapping("/quantity/change")
     @ResponseStatus(HttpStatus.CREATED)
     public CartItem incrementQuantity(@RequestBody CartItem cartItem) {
         return this.cartItemService.changeQuantity(cartItem);
