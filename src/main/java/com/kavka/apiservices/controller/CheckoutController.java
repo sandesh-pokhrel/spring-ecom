@@ -45,11 +45,11 @@ public class CheckoutController {
             double discountedPrice = 0D;
             checkoutSummary.setOriginalPrice(checkoutSummary.getOriginalPrice() + cartItem.getProductDetail().getPrice() * cartItem.getQuantity());
 
-            if (cartItem.getQuantity() > tierThreeQuantity && Objects.nonNull(cartItem.getProductDetail().getTierThreePrice()))
+            if (Objects.nonNull(tierThreeQuantity) && cartItem.getQuantity() > tierThreeQuantity && Objects.nonNull(cartItem.getProductDetail().getTierThreePrice()))
                 discountedPrice += cartItem.getQuantity() * cartItem.getProductDetail().getTierThreePrice();
-            else if (cartItem.getQuantity() > tierTwoQuantity && Objects.nonNull(cartItem.getProductDetail().getTierTwoPrice()))
+            else if (Objects.nonNull(tierTwoQuantity) && cartItem.getQuantity() > tierTwoQuantity && Objects.nonNull(cartItem.getProductDetail().getTierTwoPrice()))
                 discountedPrice += cartItem.getQuantity() * cartItem.getProductDetail().getTierTwoPrice();
-            else if (cartItem.getQuantity() > tierOneQuantity && Objects.nonNull(cartItem.getProductDetail().getTierOnePrice()))
+            else if (Objects.nonNull(tierOneQuantity) && cartItem.getQuantity() > tierOneQuantity && Objects.nonNull(cartItem.getProductDetail().getTierOnePrice()))
                 discountedPrice += cartItem.getQuantity() * cartItem.getProductDetail().getTierOnePrice();
 
             checkoutSummary.setDiscountPrice(discountedPrice);
