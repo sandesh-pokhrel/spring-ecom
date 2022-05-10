@@ -31,7 +31,7 @@ insert into product_category (code, enabled, name, thumbnail_image_url)
 values ('AD8Y2', true, 'Product category name', 'product_category_thumbnail_url');
 insert into product (code, description, image_url, name, product_category_id)
 values ('PRCODE', 'Very long product description goes here', 'product_dummy_image_url', 'Product name', 1);
-insert into product_detail (code, colors, image_url, name, price, product_id)
-values ('RT8YZ-3*3', null, 'product_detail_image_url', 'Product detail name', 175, 1);
-insert into product_detail (code, colors, image_url, name, price, product_id)
-values ('M6KLY-6*7', null, 'product_detail_image_url_second', 'Product detail name second', 85, 1);
+insert into product_detail (code, colors, image_url, name, price, product_id, tier_one_price, tier_two_price, tier_three_price)
+values ('RT8YZ-3*3', null, 'product_detail_image_url', 'Product detail name', 175, 1, 5, 10, 15);
+insert into product_detail (code, colors, image_url, name, price, product_id, tier_one_price, tier_two_price, tier_three_price)
+values ('M6KLY-6*7', null, 'product_detail_image_url_second', 'Product detail name second', 85, 1, 4, 8, 12);
