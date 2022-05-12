@@ -39,6 +39,7 @@ public class OrderService {
     private final UserService userService;
     private final ProductDetailService productDetailService;
     private final UserStoreCreditService userStoreCreditService;
+    private final CartItemService cartItemService;
     private final Validator validator;
     private final OrderToDtoMapper orderToDtoMapper;
     private final OrderRequestItemToModelMapper orderRequestItemToModelMapper;
@@ -103,6 +104,7 @@ public class OrderService {
         Order savedOrder = this.orderRepository.save(order);
         if (order.getOrderPayment().getPaymentType() == PaymentType.STORE_CREDIT)
             this.userStoreCreditService.updateBalances(savedOrder.getTotalAmount(), user);
+        this.cartItemService.deleteAfterOrderPlaced(savedOrder);
         //OrderResponse orderResponse = sendOrderToOrderDesk(savedOrder.getId());  uncomment this in production
         OrderResponse orderResponse = null; // remove this in production
         return new HashMap<String, Object>() {{

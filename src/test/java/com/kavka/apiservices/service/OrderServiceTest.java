@@ -49,6 +49,8 @@ class OrderServiceTest {
     @Mock
     private UserStoreCreditService userStoreCreditService;
     @Mock
+    private CartItemService cartItemService;
+    @Mock
     private Validator validator;
     @Mock
     private OrderToDtoMapper orderToDtoMapper;
@@ -126,7 +128,7 @@ class OrderServiceTest {
     @BeforeEach
     void setup() {
         this.orderService = new OrderService(orderRepository, addressService, userService,
-                productDetailService, userStoreCreditService, validator, orderToDtoMapper,
+                productDetailService, userStoreCreditService, cartItemService, validator, orderToDtoMapper,
                 orderRequestItemToModelMapper, paymentRequestToModelMapper,
                 orderRequestToModelMapper, restTemplate);
 
