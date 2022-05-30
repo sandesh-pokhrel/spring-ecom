@@ -1,6 +1,10 @@
 package com.kavka.apiservices.controller;
 
+import com.kavka.apiservices.dto.ProductDto;
+import com.kavka.apiservices.dto.mapper.ProductToDtoMapper;
 import com.kavka.apiservices.model.Product;
+import com.kavka.apiservices.model.ProductDetail;
+import com.kavka.apiservices.service.ProductDetailService;
 import com.kavka.apiservices.service.ProductService;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
@@ -8,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/products")
@@ -17,6 +22,8 @@ import java.util.List;
 public class ProductController {
 
     private final ProductService productService;
+    private final ProductDetailService productDetailService;
+    private final ProductToDtoMapper productToDtoMapper;
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
@@ -32,7 +39,8 @@ public class ProductController {
 
     @GetMapping("/product-categories/{product-category-id}")
     @ResponseStatus(HttpStatus.OK)
-    public List<Product> getAllByProductCategory(@PathVariable("product-category-id") Integer productCategoryId) {
-        return this.productService.getAllByProductCategory(productCategoryId);
+    public List<ProductDto> getAllByProductCategory(@PathVariable("product-category-id") Integer productCategoryId) {
+        List<Product> products = this.productService.getAllByProductCategory(productCategoryId);
+        return products.stream().map(product -> productToDtoMapper.from(product, productDetailService)).collect(Collectors.toList());
     }
 }

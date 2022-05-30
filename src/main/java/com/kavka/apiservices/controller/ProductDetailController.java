@@ -21,9 +21,9 @@ public class ProductDetailController {
         return this.productDetailService.getById(id);
     }
 
-    @GetMapping("/products/{product-detail-id}")
+    @GetMapping("/products/{product-id}")
     @ResponseStatus(HttpStatus.OK)
-    public List<ProductDetail> getByProduct(@PathVariable("product-detail-id") Integer productDetailId) {
-        return this.productDetailService.getAllByProductDetail(productDetailId);
+    public List<ProductDetail> getByProduct(@PathVariable("product-id") Integer productId) {
+        return this.productDetailService.getAllByProduct(productId);
     }
 }

@@ -22,8 +22,8 @@ public class ProductDetailService {
                 .orElseThrow(() -> new InvalidOperationException("Product not found!"));
     }
 
-    public List<ProductDetail> getAllByProductDetail(Integer productDetailId) {
-        Product product = this.productService.getById(productDetailId);
+    public List<ProductDetail> getAllByProduct(Integer productId) {
+        Product product = this.productService.getById(productId);
         if (Objects.isNull(product))
             throw new InvalidOperationException("Product not found!");
         return this.productDetailRepository.findAllByProduct(product);
