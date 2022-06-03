@@ -23,8 +23,30 @@ public class Product {
     private String name;
     @Column(nullable = false)
     private String code;
+    @Column(length = 2000)
     private String description;
     private String imageUrl;
+    private String artist;
+    private String colorWayfair;
+    private String countryOfManufacture;
+    @Column(name = "feature_wayfair1")
+    private String featureWayfairOne;
+    @Column(name = "feature_wayfair2")
+    private String featureWayfairTwo;
+    @Column(name = "feature_wayfair3")
+    private String featureWayfairThree;
+    @Column(name = "feature_wayfair4")
+    private String featureWayfairFour;
+    @Column(name = "feature_wayfair5")
+    private String featureWayfairFive;
+    @Column(name = "feature_wayfair6")
+    private String featureWayfairSix;
+    private String holidayWayfair;
+    private String shipTypeWayfair;
+    private String kavkaCollection;
+    private Double leadTimeHoursWayfair;
+    private Double replacementTimeHoursWayfair;
+    private String shopifyTags;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "product_category_id", referencedColumnName = "id",

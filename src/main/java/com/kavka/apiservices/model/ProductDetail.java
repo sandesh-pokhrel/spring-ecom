@@ -20,16 +20,46 @@ public class ProductDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(nullable = false)
     private String name;
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String code;
-    private String colors;
+    private String sku;
+    private String ctSku;
     private Double price;
-    private String imageUrl;
     private Double tierOnePrice;
     private Double tierTwoPrice;
     private Double tierThreePrice;
+    private String ctPrintTemplate;
+    private Double cartonDepth;
+    private Double cartonHeight;
+    private Double cartonWidth;
+    private String mainImageUrl;
+    @Column(name = "other_image1")
+    private String otherImageOne;
+    @Column(name = "other_image2")
+    private String otherImageTwo;
+    @Column(name = "other_image3")
+    private String otherImageThree;
+    @Column(name = "other_image4")
+    private String otherImageFour;
+    @Column(name = "other_image5")
+    private String otherImageFive;
+    @Column(name = "other_image6")
+    private String otherImageSix;
+    @Column(name = "other_image7")
+    private String otherImageSeven;
+    @Column(name = "other_image8")
+    private String otherImageEight;
+    private String printSize;
+    private String productDimensions;
+    private Double productMaxDepth;
+    private Double productMaxHeight;
+    private Double productMaxWidth;
+    private Double productWeight;
+    private Double shippingWeight;
+    private String productTypeWayfair;
+    private String seasonWayfair;
+
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "product_id", referencedColumnName = "id",
