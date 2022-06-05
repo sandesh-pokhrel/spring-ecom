@@ -28,10 +28,12 @@ values ('user_address_another', 'user_address__another', 'user_city', 'user', 'C
         '790-0006588', 89023, 'DC', false, 2);
 
 -- INSERT INTO PRODUCT-CATEGORIES
-insert into product_category (code, enabled, name, thumbnail_image_url)
+insert into product_category (code, enabled, name, thumbnail_image_url, description)
 values ('MWODR', true, 'Area Rugs',
-        'https://cdn.shopify.com/s/files/1/1957/9535/collections/RUG_720x.jpg?v=1607974587'),
-       ('AD8Y22', true, 'Accent Pillows',
+        'https://cdn.shopify.com/s/files/1/1957/9535/collections/RUG_720x.jpg?v=1607974587',
+        'Anchor your room with our beautiful artisan designed, low pile, jacquard woven rug. Ideal for high traffic areas and occasional spills. Rug pad recommended.');
+insert into product_category (code, enabled, name, thumbnail_image_url)
+values ('AD8Y22', true, 'Accent Pillows',
         'https://cdn.shopify.com/s/files/1/1957/9535/collections/Accent_Pillows_720x.jpg?v=1632321152'),
        ('AD8Y23', true, 'Indoor|outdoor accent pillows',
         'https://cdn.shopify.com/s/files/1/1957/9535/collections/OUTDOOR_PILLOWS_720x.jpg?v=1631817159'),

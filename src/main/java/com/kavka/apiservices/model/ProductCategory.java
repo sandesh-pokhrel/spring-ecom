@@ -32,4 +32,5 @@ public class ProductCategory {
     private String code;
     private String thumbnailImageUrl;
     private Boolean enabled;
+    private String description;
 }
