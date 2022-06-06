@@ -4,6 +4,8 @@ import com.kavka.apiservices.model.ProductCategory;
 import com.kavka.apiservices.service.ProductCategoryService;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,6 +35,7 @@ public class ProductCategoryController {
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
+    @Cacheable(cacheNames = "product-categories", key = "#id")
     public ProductCategory getById(@PathVariable Integer id) {
         return this.productCategoryService.getById(id);
     }
@@ -45,6 +48,7 @@ public class ProductCategoryController {
 
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.CREATED)
+    @CachePut(cacheNames = "product-categories", key = "#id")
     public ProductCategory update(@Valid @RequestBody ProductCategory productCategory,
                                   @PathVariable Integer id) {
         this.productCategoryService.getById(id);
