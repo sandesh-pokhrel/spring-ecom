@@ -23,6 +23,7 @@
         <mysql.version>8.0.27</mysql.version>
         <apache-lang3.version>3.12.0</apache-lang3.version>
         <apache-io.version>2.11.0</apache-io.version>
+        <apache-poi.version>5.2.2</apache-poi.version>
 <!--        <spring-boot.repackage.skip>true</spring-boot.repackage.skip>-->
         <hibernate-validator.version>6.2.0.Final</hibernate-validator.version>
         <start-class>com.kavka.apiservices.ApiServicesApplication</start-class>
@@ -105,6 +106,16 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
             <version>${apache-io.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi</artifactId>
+            <version>${apache-poi.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${apache-poi.version}</version>
         </dependency>
         <dependency>
             <groupId>io.springfox</groupId>

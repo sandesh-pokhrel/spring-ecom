@@ -54,6 +54,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .antMatchers(HttpMethod.GET, "/products/**").permitAll()
                 .antMatchers(HttpMethod.GET, "/product-details/**").permitAll()
                 .antMatchers(HttpMethod.POST, "/credit-applications/verify/**").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST, "/files/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and()
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
