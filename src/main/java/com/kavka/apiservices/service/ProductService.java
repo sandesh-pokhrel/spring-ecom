@@ -1,5 +1,6 @@
 package com.kavka.apiservices.service;
 
+import com.kavka.apiservices.exception.NotFoundException;
 import com.kavka.apiservices.model.Product;
 import com.kavka.apiservices.model.ProductCategory;
 import com.kavka.apiservices.repository.ProductRepository;
@@ -17,6 +18,10 @@ public class ProductService {
 
     public Product getById(Integer id) {
         return this.productRepository.findById(id).orElse(null);
+    }
+
+    public Product getByCode(String code) {
+        return this.productRepository.findByCode(code).orElseThrow(() -> new NotFoundException("Product code does not exist"));
     }
 
     public List<Product> getAll() {
