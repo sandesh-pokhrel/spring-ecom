@@ -1,5 +1,6 @@
 package com.kavka.apiservices.service;
 
+import com.kavka.apiservices.exception.InvalidOperationException;
 import com.kavka.apiservices.exception.NotFoundException;
 import com.kavka.apiservices.model.Product;
 import com.kavka.apiservices.model.ProductCategory;
@@ -15,10 +16,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -81,7 +79,10 @@ public class ProductFileService extends FileService<ProductColumnHeader>{
     public void loadFromExcelWhole(XSSFWorkbook workbook) {
         List<Map<ProductColumnHeader, Object>> listObjectMap = createMapFromWorkBook(workbook, ProductColumnHeader.values());
         Product savedProduct = null;
+        Map<String, ProductCategory> productCategoryMap = new HashMap<>();
         for (Map<ProductColumnHeader, Object> objectMap : listObjectMap) {
+            String sku = generalUtil.getMatchingTypeValue(objectMap.get(ProductColumnHeader.SKU), String.class);
+            String productCategoryCode = sku.substring(0, sku.indexOf("-"));
             Integer productId = null;
             try {
                 productId = getProductIdByCode(generalUtil.getMatchingTypeValue(objectMap.get(ProductColumnHeader.ARTIST_PRINT_SERIAL), String.class));
@@ -89,8 +90,11 @@ public class ProductFileService extends FileService<ProductColumnHeader>{
                 e.printStackTrace();
             }
             if (Objects.isNull(productId)) {
-                // TODO: remove this hardcoded value later
-                ProductCategory productCategory = this.productCategoryService.getById(1);
+                if (!productCategoryMap.containsKey(productCategoryCode)) {
+                    ProductCategory productCategory = productCategoryService.getByCode(productCategoryCode);
+                    if (Objects.isNull(productCategory)) throw new InvalidOperationException("Bad excel file!");
+                    productCategoryMap.put(productCategoryCode, productCategory);
+                }
                 Product product = Product.builder()
                         .artist(generalUtil.getMatchingTypeValue(objectMap.get(ProductColumnHeader.ARTIST), String.class))
                         .code(generalUtil.getMatchingTypeValue(objectMap.get(ProductColumnHeader.ARTIST_PRINT_SERIAL), String.class))
@@ -112,12 +116,11 @@ public class ProductFileService extends FileService<ProductColumnHeader>{
                         .shopifyTags(generalUtil.getMatchingTypeValue(objectMap.get(ProductColumnHeader.SHOPIFY_TAGS), String.class))
                         .name(generalUtil.getMatchingTypeValue(objectMap.get(ProductColumnHeader.TITLE), String.class))
                         .imageUrl(generalUtil.getMatchingTypeValue(objectMap.get(ProductColumnHeader.MAIN_IMAGE_URL), String.class))
-                        .productCategory(productCategory)
+                        .productCategory(productCategoryMap.get(productCategoryCode))
                         .build();
                 savedProduct = productService.save(product);
             }
             if (Objects.nonNull(savedProduct)) {
-                String sku = generalUtil.getMatchingTypeValue(objectMap.get(ProductColumnHeader.SKU), String.class);
                 // TODO: excel does not contain tier prices verify this
                 ProductDetail productDetail = ProductDetail.builder()
                         .code(sku.substring(sku.indexOf("-")+1, sku.lastIndexOf("-")))
