@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 @Mapper(componentModel = "spring")
 public interface OrderToDtoMapper {
 
+    @Mapping(target = "dateAdded", ignore = true)
     @Mapping(target = "customer", source = "customer")
     @Mapping(target = "sourceId", ignore = true)
     @Mapping(target = "orderMetadata", expression = "java(new java.util.HashMap<String, String>(){{put(\"ship_notify_url\", \"link to your site for notification\");}})")

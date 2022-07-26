@@ -32,4 +32,8 @@ public class ProductService {
         ProductCategory productCategory = this.productCategoryService.getById(productCategoryId);
         return this.productRepository.findAllByProductCategory(productCategory);
     }
+
+    public Product save(Product product) {
+        return this.productRepository.saveAndFlush(product);
+    }
 }

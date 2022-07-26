@@ -28,4 +28,8 @@ public class ProductDetailService {
             throw new InvalidOperationException("Product not found!");
         return this.productDetailRepository.findAllByProduct(product);
     }
+
+    public ProductDetail save(ProductDetail productDetail) {
+        return this.productDetailRepository.save(productDetail);
+    }
 }
