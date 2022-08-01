@@ -28,6 +28,10 @@ public class ProductCategoryService {
                 .orElseThrow(() -> new InvalidOperationException("Product category not found!"));
     }
 
+    public ProductCategory getByCode(String code) {
+        return this.productCategoryRepository.findByCode(code);
+    }
+
     public ProductCategory save(ProductCategory productCategory) {
         if (Objects.isNull(productCategory.getId()) && Objects.isNull(productCategory.getEnabled()))
             productCategory.setEnabled(true);
