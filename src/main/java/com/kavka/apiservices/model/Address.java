@@ -42,6 +42,7 @@ public class Address {
     @JsonProperty("postal_code")
     @NotBlank(message = "Postal code cannot be blank")
     private String postalCode;
+    private String zip;
     @NotBlank(message = "Country cannot be blank")
     private String country;
     private String phone;
