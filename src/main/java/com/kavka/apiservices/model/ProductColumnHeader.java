@@ -1,5 +1,8 @@
 package com.kavka.apiservices.model;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 public enum ProductColumnHeader {
 
     SKU("sku"),
@@ -50,9 +53,5 @@ public enum ProductColumnHeader {
     UPC("UPC"),
     WPRICE_WAYFAIR("wPrice-wayfair");
 
-    final String value;
-
-    ProductColumnHeader(String value) {
-        this.value = value;
-    }
+    private final String value;
 }

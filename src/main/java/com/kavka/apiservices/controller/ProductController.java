@@ -3,15 +3,17 @@ package com.kavka.apiservices.controller;
 import com.kavka.apiservices.dto.ProductDto;
 import com.kavka.apiservices.dto.mapper.ProductToDtoMapper;
 import com.kavka.apiservices.model.Product;
-import com.kavka.apiservices.model.ProductDetail;
 import com.kavka.apiservices.service.ProductDetailService;
 import com.kavka.apiservices.service.ProductService;
 import io.swagger.annotations.Api;
 import lombok.AllArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @RestController
@@ -27,8 +29,8 @@ public class ProductController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public List<Product> getAll() {
-        return this.productService.getAll();
+    public Page<Product> getAll(@NotNull @RequestParam Map<String, String> paramMap) {
+        return this.productService.getAll(paramMap);
     }
 
     @GetMapping("/{id}")
