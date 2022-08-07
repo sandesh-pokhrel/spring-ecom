@@ -68,6 +68,7 @@ public class CreditApplicationDetail {
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "id", unique = true,
             foreignKey = @ForeignKey(name = "fk_credit_application_detail_user_id"))
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private User user;
 
     @JsonProperty("user")

@@ -32,6 +32,13 @@ public class CreditApplicationDetailController {
         return this.creditApplicationDetailService.save(creditApplicationDetail);
     }
 
+    @GetMapping("/users/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public CreditApplicationDetail getByUser(@PathVariable Integer id) {
+
+        return creditApplicationDetailService.getByUser(userService.getById(id));
+    }
+
     @PostMapping("/verify/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void verifyApplication(@PathVariable Integer id,
