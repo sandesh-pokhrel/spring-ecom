@@ -8,7 +8,7 @@ For building and running the application we need:
 
 ## Clone the kavka backend
 
-Once the Git SCM is installed successfully in the machine we can use it to clean the repository in the local machine. As this is a private repository the valid credential is required for the access.
+Once the Git SCM is installed successfully in the machine we can use it to clone the repository in the local machine. As this is a private repository the valid credential is required for the access.
 
 ```
 git clone https://gitlab.com/mghimire/my-direct-art-node.git
